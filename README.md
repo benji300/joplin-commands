@@ -11,7 +11,7 @@ It contains a collection of [commands](#commands) and [UI enhancements](#ui-enha
 * [Features](#features)
   * [Commands](#commands)
   * [UI enhancements](#ui-enhancements)
-  * [User settings](#user-settings)
+  * [User options](#user-options)
 * [Installation](#installation)
 * [UI tweaks](#ui-tweaks)
 * [Support](#support)
@@ -35,9 +35,9 @@ It contains a collection of [commands](#commands) and [UI enhancements](#ui-enha
 
 To get the best result, check out the [UI tweaks](#ui-tweaks).
 
-### User settings
+### User options
 
-> TODO - describe added user settings (if available)
+> TODO - describe added User options (if available)
 
 ## Installation
 
@@ -51,7 +51,11 @@ E.g. to not show something which is displayed elsewhere via the new plugin).
 
 ## Support
 
-If you need help or found a bug, open an issue on the [GitHub repository](https://github.com/benji300-joplin-extensions/note-extensions/issues).
+If you need help or found a bug, open an issue on the [GitHub repository](https://github.com/benji300-joplin-extensions/note-extensions/issues).
+
+## Changes
+
+See [CHANGELOG](./CHANGELOG.md) for details.
 
 ## License
 
