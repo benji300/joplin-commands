@@ -2,7 +2,7 @@
 
 _note-extensions_ is a plugin to extend the UX and UI of [Joplin](https://joplinapp.org/)'s desktop application.
 
-> TODO - describe what it does "It..."
+It contains a collection of [commands](#commands) and [UI enhancements](#ui-enhancements) to make working with notes easier and faster.
 
 > **NOTE** - This plugin requires at least Joplin v1.3.9!
 
@@ -10,7 +10,7 @@ _note-extensions_ is a plugin to extend the UX and UI of [Joplin](https://joplin
 
 * [Features](#features)
   * [Commands](#commands)
-  * [UI additions](#ui-additions)
+  * [UI enhancements](#ui-enhancements)
   * [User settings](#user-settings)
 * [Installation](#installation)
 * [UI tweaks](#ui-tweaks)
@@ -26,7 +26,7 @@ _note-extensions_ is a plugin to extend the UX and UI of [Joplin](https://joplin
 - Add new Note (`addNewNote`)
   - Adds a new note to the list
 
-### UI additions
+### UI enhancements
 
 > TODO - describe additions to the UI (with images, if available)\
 > New panels, views, dialogs, ... in sub-chapters
@@ -37,7 +37,7 @@ To get the best result, check out the [UI tweaks](#ui-tweaks).
 
 ### User settings
 
-> TODO - describe user settings (if available)
+> TODO - describe added user settings (if available)
 
 ## Installation
 
@@ -51,7 +51,7 @@ E.g. to not show something which is displayed elsewhere via the new plugin).
 
 ## Support
 
-If you need help or found a bug, open an issue on the [GitHub repository](https://github.com/benji300-joplin-extensions/note-extensions/issue).
+If you need help or found a bug, open an issue on the [GitHub repository](https://github.com/benji300-joplin-extensions/note-extensions/issues).
 
 ## License
 
