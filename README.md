@@ -47,11 +47,17 @@ To get the best result, check out the [UI tweaks](#ui-tweaks).
 
 > TODO - describe how to change `webview.css` or `userchrome.css` (if available)
 
+### General styles
+
 E.g. to not show something which is displayed elsewhere via the new plugin).
+
+### Rendered Markdown
+
+
 
 ## Support
 
-If you need help or found a bug, open an issue on the [GitHub repository](https://github.com/benji300-joplin-extensions/note-extensions/issues).
+If you need help or found a bug, open an issue on [GitHub](https://github.com/benji300-joplin-extensions/note-extensions/issues).
 
 ## Changes
 
