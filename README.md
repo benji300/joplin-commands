@@ -2,7 +2,7 @@
 
 _note-extensions_ is a plugin to extend the UX and UI of [Joplin](https://joplinapp.org/)'s desktop application.
 
-It contains a collection of [commands](#commands) and [UI enhancements](#ui-enhancements) to make working with notes easier and faster.
+It provides a collection of [commands](#commands) and [UI enhancements](#ui-enhancements) to facilitate the work with notes.
 
 > **NOTE** - This plugin requires at least Joplin v1.3.9!
 
