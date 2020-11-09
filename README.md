@@ -8,41 +8,48 @@ It provides a set of [features](#features) to enhance working with notes and to-
 
 ## Table of contents
 
-* [Features](#features)
-  * [New commands](#new-commands)
-  * [Mapped commands](#mapped-commands)
-  * [User options](#user-options)
-* [Installation](#installation)
-* [Uninstallation](#uninstallation)
-* [Support](#support)
-* [Changes](#changes)
-* [License](#license)
+- [Features](#features)
+  - [New commands](#new-commands)
+  - [Mapped commands](#mapped-commands)
+  - [User options](#user-options)
+- [Installation](#installation)
+- [Uninstallation](#uninstallation)
+- [Support](#support)
+- [Changes](#changes)
+- [License](#license)
 
 ## Features
 
-* Add several [new commands](#new-commands) to
-  * Update note properties (e.g. [Toggle to-do state](#toggle-to-do-state))
-  * [Move notes](#move-notes) in current note list
-  * and more...
-  
-* Map Joplin [internal commands](#mapped-commands) to the main menu
-  * Allows to assign keyboard shortcuts to them.
- 
-* TODO user options
+- Several [new commands](#new-commands) to ...
+
+  - Update note properties (e.g. [Toggle to-do state](#toggle-to-do-state))
+  - [Move notes](#move-notes) in current note list
+  - and more...
+
+- Map Joplin [internal commands](#mapped-commands) to the main menu
+
+  - Allows to assign keyboard shortcuts to them
+
+- Several [user options](#user-options) to specify additional display locations for commands
+
+  - For example to display also in note toolbar
+
 
 ### New Commands
 
-> **NOTE** - Default keyboard shortcuts can be changed in user options.\
-> Navigate to `Tools > Options > Keyboard Shortcuts` and search for the command label to be changed.
+This plugin provides the new commands as described in the following chapters.
 
-> **NOTE** - Column `UI Locations` describes where buttons for the command can be added to the UI.\
-> Whether the buttons are finally be displayed can be set in the [user options](#user-options).
+- Each command is added to the `Note` main menu entry
+- Column `UI Locations` describes where the command can additionally be added to the UI.
+  - Whether the command is displayed or not can be set in the [user options](#user-options)
+- Default keyboard shortcuts can be changed in user options
+  - Navigate to `Tools > Options > Keyboard Shortcuts` and search for the command label to be changed.
 
 #### Toggle to-do state
 
-| Command Label      | Command ID        | Default Key             | UI Locations |
-| ------------------ | ----------------- | ----------------------- | ------------ |
-| Toggle to-do state | `toggleTodoState` | `CmdOrCtrl+Shift+Space` | Note toolbar |
+| Command Label      | Command ID        | Default Key             | UI Locations               |
+| ------------------ | ----------------- | ----------------------- | -------------------------- |
+| Toggle to-do state | `toggleTodoState` | `CmdOrCtrl+Shift+Space` | Note context, Note toolbar |
 
 Set the status of the selected to-do to either completed or open.
 
@@ -69,9 +76,9 @@ TODO describe more detailed...
 
 #### Open URL in browser
 
-| Command Label       | Command ID         | Default Key            | UI Locations |
-| ------------------- | ------------------ | ---------------------- | ------------ |
-| Open URL in browser | `openURLInBrowser` | `-`                    | Note toolbar |
+| Command Label       | Command ID         | Default Key | UI Locations |
+| ------------------- | ------------------ | ----------- | ------------ |
+| Open URL in browser | `openURLInBrowser` | `-`         | Note toolbar |
 
 TODO describe more detailed...
 
@@ -79,10 +86,10 @@ TODO describe more detailed...
 
 | Command Label       | Command ID         | Default Key            | UI Locations |
 | ------------------- | ------------------ | ---------------------- | ------------ |
-| Move note to top    | `moveNoteToTop`    | `CmdOrCtrl+Alt+Up`     | Context menu |
-| Move note up        | `moveNoteUp`       | `CmdOrCtrl+Shift+Up`   | Context menu |
-| Move note down      | `moveNoteDown`     | `CmdOrCtrl+Shift+Down` | Context menu |
-| Move note to bottom | `moveNoteToBottom` | `CmdOrCtrl+Alt+Down`   | Context menu |
+| Move note to top    | `moveNoteToTop`    | `CmdOrCtrl+Alt+Up`     | Note context |
+| Move note up        | `moveNoteUp`       | `CmdOrCtrl+Shift+Up`   | Note context |
+| Move note down      | `moveNoteDown`     | `CmdOrCtrl+Shift+Down` | Note context |
+| Move note to bottom | `moveNoteToBottom` | `CmdOrCtrl+Alt+Down`   | Note context |
 
 Change the position of a note in the current note list if 'Custom order' sort is active.
 
@@ -91,12 +98,12 @@ Change the position of a note in the current note list if 'Custom order' sort is
 ### Mapped commands
 
 The following internal commands are mapped to main menu entries. This allows to assign keyboard shortcuts to them.
- 
-| Menu    | Command Label       | Command ID         | Default Key            |
-| --------| ------------------- | ------------------ | ---------------------- |
-| Edit    | Checkbox            | `textCheckbox`     | `CmdOrCtrl+Shift+C`    |
-| Note    | Move to notebook    | `moveToFolder`     | `CmdOrCtrl+Shift+M`    |
-| Note    | Set alarm           | `editAlarm`        | -                      |
+
+| Menu                   | Command Label    | Command ID     | Default Key         |
+| ---------------------- | ---------------- | -------------- | ------------------- |
+| Edit                   | Checkbox         | `textCheckbox` | `CmdOrCtrl+Shift+C` |
+| Note                   | Move to notebook | `moveToFolder` | `CmdOrCtrl+Shift+M` |
+| Note > Note properties | Set alarm        | `editAlarm`    | -                   |
 
 ### User options
 
@@ -104,7 +111,7 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 > **NOTE** - Changes to the user options are only applied after a restart of the app.
 
-- Show [Toggle to-do state](#toggle-to-do-state) button on note toolbar:\
+- Show [Toggle to-do state](#toggle-to-do-state) on note toolbar:\
   _Select whether an button for the command shall be shown on the note toolbar (next to note title) or not_
 
 > TODO - Add user options here...
