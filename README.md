@@ -34,7 +34,6 @@ It provides a set of [features](#features) to enhance working with notes and to-
 
   - For example to display also in note toolbar
 
-
 ### New Commands
 
 This plugin provides the new commands as described in the following chapters.
@@ -84,12 +83,12 @@ TODO describe more detailed...
 
 #### Move notes
 
-| Command Label       | Command ID         | Default Key            | UI Locations |
-| ------------------- | ------------------ | ---------------------- | ------------ |
-| Move note to top    | `moveNoteToTop`    | `CmdOrCtrl+Alt+Up`     | Note context |
-| Move note up        | `moveNoteUp`       | `CmdOrCtrl+Shift+Up`   | Note context |
-| Move note down      | `moveNoteDown`     | `CmdOrCtrl+Shift+Down` | Note context |
-| Move note to bottom | `moveNoteToBottom` | `CmdOrCtrl+Alt+Down`   | Note context |
+| Command Label       | Command ID         | Default Key                | UI Locations |
+| ------------------- | ------------------ | -------------------------- | ------------ |
+| Move note to top    | `moveNoteToTop`    | `CmdOrCtrl+Shift+Alt+Up`   | Note context |
+| Move note up        | `moveNoteUp`       | `CmdOrCtrl+Alt+Up`         | Note context |
+| Move note down      | `moveNoteDown`     | `CmdOrCtrl+Alt+Down`       | Note context |
+| Move note to bottom | `moveNoteToBottom` | `CmdOrCtrl+Shift+Alt+Down` | Note context |
 
 Change the position of a note in the current note list if 'Custom order' sort is active.
 

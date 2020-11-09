@@ -7,10 +7,10 @@ import { info } from "console";
 const accTextCheckbox = 'CmdOrCtrl+Shift+C';
 const accToggleTodoState = 'CmdOrCtrl+Shift+Space';
 const accMoveToFolder = 'CmdOrCtrl+Shift+M';
-const accMoveNoteToTop = 'CmdOrCtrl+Alt+Up';
-const accMoveNoteUp = 'CmdOrCtrl+Shift+Up';
-const accMoveNoteDown = 'CmdOrCtrl+Shift+Down';
-const accMoveNoteToBottom = 'CmdOrCtrl+Alt+Down';
+const accMoveNoteToTop = 'CmdOrCtrl+Shift+Alt+Up';
+const accMoveNoteUp = 'CmdOrCtrl+Alt+Up';
+const accMoveNoteDown = 'CmdOrCtrl+Alt+Down';
+const accMoveNoteToBottom = 'CmdOrCtrl+Shift+Alt+Down';
 
 joplin.plugins.register({
   onStart: async function () {
@@ -63,7 +63,7 @@ joplin.plugins.register({
     await joplin.commands.register({
       name: 'touchNote',
       label: 'Touch note',
-      iconName: 'fas fa-flask', // timestamp icon?
+      iconName: 'fas fa-hand-point-up',
       execute: async () => {
         const todo = await joplin.workspace.selectedNote();
         await joplin.data.put(['notes', todo.id], null, { updated_time: Date.now() });
@@ -156,7 +156,8 @@ joplin.plugins.register({
     // prepare "Note properties" sub-menu
     const notePropertiesSubMenu = [
       {
-        commandName: "editAlarm"
+        // API: sub-menu entries are not shown in keyboard editor unless it has a default accelarator (or manually added to keymap.json)
+        commandName: "editAlarm",
       },
       {
         commandName: "editURL"
@@ -170,19 +171,19 @@ joplin.plugins.register({
     const moveNoteSubMenu = [
       {
         commandName: "moveNoteToTop",
-        accelerator: "accMoveNoteToTop"
+        accelerator: accMoveNoteToTop
       },
       {
         commandName: "moveNoteUp",
-        accelerator: "accMoveNoteUp"
+        accelerator: accMoveNoteUp
       },
       {
         commandName: "moveNoteDown",
-        accelerator: "accMoveNoteDown"
+        accelerator: accMoveNoteDown
       },
       {
         commandName: "moveNoteToBottom",
-        accelerator: "accMoveNoteToBottom"
+        accelerator: accMoveNoteToBottom
       }
     ];
 
@@ -190,21 +191,14 @@ joplin.plugins.register({
     await joplin.views.menuItems.create('textCheckbox', MenuItemLocation.Edit, { accelerator: accTextCheckbox });
 
     // add commands to "note" menu
-    // API: "menuItems" in sub-menus do not get default accelarators and are not shown in keyboard shortcuts editor
-    //      Unless a shortcut is manually added to the keymap.json
-    // API: "menuItems" are always sorted before "menus" in main menu (MenuItemLocation) - the order here is ignored
-    // API: Only the first "menuItem" in main menu (MenuItemLocation) will get default accelarator specified here
-    //      All following are ignored unless they are manually added to keymap.json
     await joplin.views.menuItems.create('toggleTodoState', MenuItemLocation.Note, { accelerator: accToggleTodoState });
     await joplin.views.menuItems.create('moveToFolder', MenuItemLocation.Note, { accelerator: accMoveToFolder });
     await joplin.views.menus.create('Move in list', moveNoteSubMenu, MenuItemLocation.Note);
-    // API: By default the last of this four entries is not displayed at all (maybe yes, maybe no)
     await joplin.views.menus.create('Note properties', notePropertiesSubMenu, MenuItemLocation.Note);
 
     // add commands to context menu
     // API: sub-menus are not shown in context menu
     await joplin.views.menus.create('Move in list', moveNoteSubMenu, MenuItemLocation.Context);
-    // API: this entry is also not added to the context menu
     await joplin.views.menuItems.create('toggleTodoState', MenuItemLocation.Context);
 
     // add commands to note toolbar depending on user options
@@ -212,6 +206,9 @@ joplin.plugins.register({
     if (showToggleTodoStateToolbar) {
       await joplin.views.toolbarButtons.create('toggleTodoState', ToolbarButtonLocation.NoteToolbar);
     }
+
+    // TODO test command icons here
+    // await joplin.views.toolbarButtons.create('touchNote', ToolbarButtonLocation.NoteToolbar);
 
     //#endregion
 
