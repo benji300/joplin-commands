@@ -1,0 +1,40 @@
+{
+  "name": "joplin-plugin-ext",
+  "version": "0.1.0",
+  "description": "TODO",
+  "keywords": [
+    "joplin",
+    "plugin",
+    "note",
+    "commands"
+  ],
+  "author": "Benji300",
+  "license": "MIT",
+  "homepage": "https://github.com/benji300/joplin-note-ext",
+  "bugs": {
+    "url": "https://github.com/benji300/joplin-note-ext/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benji300/joplin-note-ext.git"
+  },
+  "scripts": {
+    "dist": "webpack",
+    "postinstall": "npm run dist",
+    "pack-zip": "npm-pack-zip",
+    "pack-tar": "npm pack",
+    "release": "npm run dist && npm run pack-zip && npm run pack-tar"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/node": "^14.0.14",
+    "copy-webpack-plugin": "^6.1.0",
+    "npm-pack-zip": "^1.2.7",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
