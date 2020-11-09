@@ -65,7 +65,6 @@ joplin.plugins.register({
       execute: async () => {
         const note = await joplin.workspace.selectedNote();
         if (note.todo_completed) {
-        } else {
           await joplin.data.put(['notes', note.id], null, { todo_completed: 0 });
         } else {
           await joplin.data.put(['notes', note.id], null, { todo_completed: Date.now() });
