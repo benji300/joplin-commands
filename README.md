@@ -54,6 +54,14 @@ Set the status of the selected to-do to either completed or open.
 
 > **NOTE** - Works only with to-dos.
 
+#### Copy note ID
+
+| Command Label | Command ID   | Default Key | UI Locations |
+| ------------- | ------------ | ----------- | ------------ |
+| Copy note ID  | `copyNoteId` | -           | Note context |
+
+Copy the IDs of all selected notes to the clipboard.
+
 #### Touch note
 
 | Command Label | Command ID  | Default Key | UI Locations |
@@ -110,8 +118,11 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 > **NOTE** - Changes to the user options are only applied after a restart of the app.
 
+- Show [Open URL in browser](#open-url-in-browser) on note toolbar:\
+  _Select whether a button for the command shall be shown on the note toolbar (next to note title) or not_
+
 - Show [Toggle to-do state](#toggle-to-do-state) on note toolbar:\
-  _Select whether an button for the command shall be shown on the note toolbar (next to note title) or not_
+  _Select whether a button for the command shall be shown on the note toolbar (next to note title) or not_
 
 > TODO - Add user options here...
 

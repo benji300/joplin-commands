@@ -3,10 +3,15 @@ import JoplinViewsDialogs from "api/JoplinViewsDialogs";
 import { MenuItemLocation, ToolbarButtonLocation } from 'api/types';
 import { info } from "console";
 
+// const open = require('open');
+// const { shell } = require('electron');
+
 // predefined keyboard shortcuts
 const accTextCheckbox = 'CmdOrCtrl+Shift+C';
 const accToggleTodoState = 'CmdOrCtrl+Shift+Space';
 const accMoveToFolder = 'CmdOrCtrl+Shift+M';
+// API: Internal shortcuts may override these ones here
+//      E.g. if note-list has focus - the "Up" key is always considered to change the selected note in the list
 const accMoveNoteToTop = 'CmdOrCtrl+Shift+Alt+Up';
 const accMoveNoteUp = 'CmdOrCtrl+Alt+Up';
 const accMoveNoteDown = 'CmdOrCtrl+Alt+Down';
@@ -25,6 +30,14 @@ joplin.plugins.register({
       label: 'Note Extensions',
       iconName: 'fas fa-tachometer-alt', // TODO icon?
       description: 'Note: Changes are only applied after a restart.'
+    });
+
+    await joplin.settings.registerSetting('showOpenURLInBrowserToolbar', {
+      value: false,
+      type: 3,
+      section: 'joplin-note-ext',
+      public: true,
+      label: 'Show "Open URL in browser" on note toolbar',
     });
 
     await joplin.settings.registerSetting('showToggleTodoStateToolbar', {
@@ -46,15 +59,32 @@ joplin.plugins.register({
       label: 'Toggle to-do state',
       iconName: 'fas fa-check',
       // API: Disabling commands with "enabledCondition" has no effect in note context menu
-      enabledCondition: "noteIsTodo",
+      enabledCondition: "noteIsTodo && oneNoteSelected",
       execute: async () => {
-        const todo = await joplin.workspace.selectedNote();
-        const state = await joplin.data.get(['notes', todo.id], { fields: ['todo_completed'] });
-        if (state) {
-          await joplin.data.put(['notes', todo.id], null, { todo_completed: Date.now() });
+        const note = await joplin.workspace.selectedNote();
+        if (note.todo_completed) {
+          await joplin.data.put(['notes', note.id], null, { todo_completed: Date.now() });
         } else {
-          await joplin.data.put(['notes', todo.id], null, { todo_completed: 0 });
+          await joplin.data.put(['notes', note.id], null, { todo_completed: 0 });
         }
+      },
+    });
+
+    // Command: copyNoteId
+    // Desc: Copy the IDs of all selected notes to the clipboard
+    await joplin.commands.register({
+      name: 'copyNoteId',
+      label: 'Copy note ID',
+      iconName: 'fas fa-copy',
+      execute: async () => {
+        const copy = require('../node_modules/copy-to-clipboard');
+        const noteIds = await joplin.workspace.selectedNoteIds();
+        const ids = [];
+        for (let i = 0; i < noteIds.length; i++) {
+          const note = await joplin.data.get(['notes', noteIds[i]], { fields: ['id'] });
+          ids.push(note.id);
+        }
+        copy(ids.join('\n'));
       },
     });
 
@@ -65,8 +95,8 @@ joplin.plugins.register({
       label: 'Touch note',
       iconName: 'fas fa-hand-point-up',
       execute: async () => {
-        const todo = await joplin.workspace.selectedNote();
-        await joplin.data.put(['notes', todo.id], null, { updated_time: Date.now() });
+        const note = await joplin.workspace.selectedNote();
+        await joplin.data.put(['notes', note.id], null, { updated_time: Date.now() });
       },
     });
 
@@ -77,8 +107,27 @@ joplin.plugins.register({
       label: 'Set URL',
       iconName: 'fas fa-edit',
       execute: async () => {
+        const note = await joplin.workspace.selectedNote();
+
+        const dialogs = joplin.views.dialogs;
+        const urlDialog = await dialogs.create();
+        // API: dialog box is fixed to width which cannot be overwritten by plugin itself
+        //      Adding "width: fit-content;" to parent container div#joplin-plugin-content fixes the problem
+        await dialogs.setHtml(urlDialog, `
+          <div class="joplin-note-ext-dialog" style="display:inline-flex;">
+            <label style="min-width:fit-content;margin:auto;padding-right:8px;">Set URL:</label>
+            <input type="text" value="${note.source_url}" style="min-width:300px;">
+          </div>
+        `);
+        const result = await dialogs.open(urlDialog);
+
+        if (result == 'ok') {
+          // API: How to get feedback from a dialog? PostMessage?
+          alert('This button was clicked: ' + result);
+        }
+
         // TODO open dialog with input box - if URL already set - display this value in the input box
-        alert('Sorry, this command is currently not implemented...');
+        // alert('Sorry, this command is currently not implemented...');
       },
     });
 
@@ -88,9 +137,30 @@ joplin.plugins.register({
       name: 'openURLInBrowser',
       label: 'Open URL in browser',
       iconName: 'fas fa-globe',
+      enabledCondition: "oneNoteSelected",
       execute: async () => {
+        const note = await joplin.workspace.selectedNote();
+
+        if (note.source_url) {
+          // await open("http://www.google.com");
+          // window.open("http://www.google.com", '_blank');
+          // open(note.source_url);
+          // alert('Open URL...');
+        }
+
         // TODO if url is set open link in default browser
         // TODO enableCondition possible? only if URL is set
+
+        // const bridge = require('electron').remote.require('./bridge').default;
+        // bridge().openExternal(url)
+
+        // oder
+        // const { shell } = require('electron')
+        // shell.openExternal('https://github.com')
+
+        // oder
+        // https://github.com/pwnall/node-open
+
         alert('Sorry, this command is currently not implemented...');
       },
     });
@@ -157,6 +227,9 @@ joplin.plugins.register({
     const notePropertiesSubMenu = [
       {
         // API: sub-menu entries are not shown in keyboard editor unless it has a default accelarator (or manually added to keymap.json)
+        commandName: "copyNoteId",
+      },
+      {
         commandName: "editAlarm",
       },
       {
@@ -200,8 +273,14 @@ joplin.plugins.register({
     // API: sub-menus are not shown in context menu
     await joplin.views.menus.create('Move in list', moveNoteSubMenu, MenuItemLocation.Context);
     await joplin.views.menuItems.create('toggleTodoState', MenuItemLocation.Context);
+    await joplin.views.menuItems.create('copyNoteId', MenuItemLocation.Context);
 
     // add commands to note toolbar depending on user options
+    // API: Icons in toolbar seems to be bigger than the default ones
+    const showOpenURLInBrowserToolbar = await joplin.settings.value('showOpenURLInBrowserToolbar');
+    if (showOpenURLInBrowserToolbar) {
+      await joplin.views.toolbarButtons.create('openURLInBrowser', ToolbarButtonLocation.NoteToolbar);
+    }
     const showToggleTodoStateToolbar = await joplin.settings.value('showToggleTodoStateToolbar');
     if (showToggleTodoStateToolbar) {
       await joplin.views.toolbarButtons.create('toggleTodoState', ToolbarButtonLocation.NoteToolbar);
