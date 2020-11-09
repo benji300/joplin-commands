@@ -23,11 +23,12 @@ It provides a set of [features](#features) to enhance working with notes and to-
 * Add several [new commands](#new-commands) to:
   * Update note properties (e.g. [Toggle to-do state](#toggle-to-do-state))
   * [Move notes](#move-notes) in current note list
+  * etc.
   
 * Map Joplin [internal commands](#mapped-commands) to the main menu
   * Allows to assign keyboard shortcuts to them.
  
-* new commands user options
+* TODO user options
 
 ### New Commands
 
