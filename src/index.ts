@@ -3,6 +3,8 @@ import JoplinViewsDialogs from "api/JoplinViewsDialogs";
 import { MenuItemLocation, ToolbarButtonLocation } from 'api/types';
 import { info } from "console";
 
+const copy = require('../node_modules/copy-to-clipboard');
+
 // const open = require('open');
 // const { shell } = require('electron');
 
@@ -28,7 +30,7 @@ joplin.plugins.register({
 
     await joplin.settings.registerSection('joplin-note-ext', {
       label: 'Note Extensions',
-      iconName: 'fas fa-tachometer-alt', // TODO icon?
+      iconName: 'fas fa-file-medical', // TODO icon? tachometer-alt
       description: 'Note: Changes are only applied after a restart.'
     });
 
@@ -63,10 +65,24 @@ joplin.plugins.register({
       execute: async () => {
         const note = await joplin.workspace.selectedNote();
         if (note.todo_completed) {
-          await joplin.data.put(['notes', note.id], null, { todo_completed: Date.now() });
         } else {
           await joplin.data.put(['notes', note.id], null, { todo_completed: 0 });
+        } else {
+          await joplin.data.put(['notes', note.id], null, { todo_completed: Date.now() });
         }
+
+        // implementation to toggle state for multiple todos - seems to cause errors
+        // const noteIds = await joplin.workspace.selectedNoteIds();
+        // for (let i = 0; i < noteIds.length; i++) {
+        //   const note = await joplin.data.get(['notes', noteIds[i]], { fields: ['todo_completed'] });
+        //   if (note.is_todo) {
+        //     if (note.todo_completed) {
+        //       await joplin.data.put(['notes', noteIds[i]], null, { todo_completed: 0 });
+        //     } else {
+        //       await joplin.data.put(['notes', noteIds[i]], null, { todo_completed: Date.now() });
+        //     }
+        //   }
+        // }
       },
     });
 
@@ -77,7 +93,6 @@ joplin.plugins.register({
       label: 'Copy note ID',
       iconName: 'fas fa-copy',
       execute: async () => {
-        const copy = require('../node_modules/copy-to-clipboard');
         const noteIds = await joplin.workspace.selectedNoteIds();
         const ids = [];
         for (let i = 0; i < noteIds.length; i++) {
@@ -108,9 +123,9 @@ joplin.plugins.register({
       iconName: 'fas fa-edit',
       execute: async () => {
         const note = await joplin.workspace.selectedNote();
-
         const dialogs = joplin.views.dialogs;
         const urlDialog = await dialogs.create();
+
         // API: dialog box is fixed to width which cannot be overwritten by plugin itself
         //      Adding "width: fit-content;" to parent container div#joplin-plugin-content fixes the problem
         await dialogs.setHtml(urlDialog, `
@@ -140,12 +155,11 @@ joplin.plugins.register({
       enabledCondition: "oneNoteSelected",
       execute: async () => {
         const note = await joplin.workspace.selectedNote();
-
         if (note.source_url) {
           // await open("http://www.google.com");
           // window.open("http://www.google.com", '_blank');
           // open(note.source_url);
-          // alert('Open URL...');
+          alert(`Open URL: ${note.source_url}`);
         }
 
         // TODO if url is set open link in default browser
