@@ -20,10 +20,10 @@ It provides a set of [features](#features) to enhance working with notes and to-
 
 ## Features
 
-* Add several [new commands](#new-commands) to:
+* Add several [new commands](#new-commands) to
   * Update note properties (e.g. [Toggle to-do state](#toggle-to-do-state))
   * [Move notes](#move-notes) in current note list
-  * etc.
+  * and more...
   
 * Map Joplin [internal commands](#mapped-commands) to the main menu
   * Allows to assign keyboard shortcuts to them.
@@ -94,10 +94,9 @@ The following internal commands are mapped to main menu entries. This allows to 
  
 | Menu    | Command Label       | Command ID         | Default Key            |
 | --------| ------------------- | ------------------ | ---------------------- |
-| Edit    | Checkbox            | `textCheckbox`     | -                      |
+| Edit    | Checkbox            | `textCheckbox`     | `CmdOrCtrl+Shift+C`    |
 | Note    | Move to notebook    | `moveToFolder`     | `CmdOrCtrl+Shift+M`    |
 | Note    | Set alarm           | `editAlarm`        | -                      |
-| TODO | | | |
 
 ### User options
 
