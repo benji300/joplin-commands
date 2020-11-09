@@ -1,96 +1,113 @@
 # Joplin Note Extensions
 
-_joplin-note-ext_ is a plugin to extend the UX [Joplin](https://joplinapp.org/)'s desktop application.
+_joplin-note-ext_ is a plugin to extend the UX and UI of [Joplin's](https://joplinapp.org/) desktop application.
 
-It provides a collection of [new commands](#new-commands) and adapts some [existing commands](#mapped-commands) to enhance working with notes and to-dos.
+It provides a set of [features](#features) to enhance working with notes and to-dos.
 
 > **NOTE** - This plugin requires at least Joplin v1.3.9!
 
 ## Table of contents
 
-- [Features](#features)
-- [New commands](#commands)
-- [Mapped commands](#mapped-commands)
-- [User options](#user-options)
-- [Installation](#installation)
-- [Uninstallation](#uninstallation)
-- [UI tweaks](#ui-tweaks)
-- [Support](#support)
-- [Changes](#changes)
-- [License](#license)
+* [Features](#features)
+  * [New commands](#new-commands)
+  * [Mapped commands](#mapped-commands)
+  * [User options](#user-options)
+* [Installation](#installation)
+* [Uninstallation](#uninstallation)
+* [Support](#support)
+* [Changes](#changes)
+* [License](#license)
 
 ## Features
 
-TODO
+* Add several [new commands](#new-commands) to:
+  * Update note properties (e.g. [Toggle to-do state](#toggle-to-do-state))
+  * [Move notes](#move-notes) in current note list
+  
+* Map Joplin [internal commands](#mapped-commands) to the main menu
+  * Allows to assign keyboard shortcuts to them.
+ 
+* new commands user options
 
-- new commands
-- mapped commands
-- new commands user options
+### New Commands
 
-## New Commands
-
-> **NOTE** - Default keyboard shortcuts can be changed in user options.
+> **NOTE** - Default keyboard shortcuts can be changed in user options.\
 > Navigate to `Tools > Options > Keyboard Shortcuts` and search for the command label to be changed.
 
-### Toggle to-do state
+> **NOTE** - Column `UI Locations` describes where buttons for the command can be added to the UI.\
+> Whether the buttons are finally be displayed can be set in the [user options](#user-options).
 
-| Command           | Command ID        | Default Key             |
-| ----------------- | ----------------- | ----------------------- |
-| Touch to-do state | `toggleTodoState` | `CmdOrCtrl+Shift+Space` |
+#### Toggle to-do state
 
-TODO describe more detailed...
+| Command Label      | Command ID        | Default Key             | UI Locations |
+| ------------------ | ----------------- | ----------------------- | ------------ |
+| Toggle to-do state | `toggleTodoState` | `CmdOrCtrl+Shift+Space` | Note toolbar |
 
-### Touch note
+Set the status of the selected to-do to either completed or open.
 
-| Command    | Command ID  | Default Key |
-| ---------- | ----------- | ----------- |
-| Touch note | `touchNote` | -           |
+> **NOTE** - Works only with to-dos.
 
-TODO describe more detailed...
+#### Touch note
 
-### Set URL
+| Command Label | Command ID  | Default Key | UI Locations |
+| ------------- | ----------- | ----------- | ------------ |
+| Touch note    | `touchNote` | -           | -            |
 
-| Command | Command ID | Default Key |
-| ------- | ---------- | ----------- |
-| Set URL | `editURL`  | -           |
+"Touch" the last updated timestamp of the selected note and set it to now.
+Useful to move a note to the top of a list when the 'Updated date' sort is active.
 
-TODO describe more detailed...
+> **NOTE** - The title or content of the note are _not_ changed.
 
-### Move notes
+#### Set URL
 
-| Command             | Command ID         | Default Key            |
-| ------------------- | ------------------ | ---------------------- |
-| Move note to top    | `moveNoteToTop`    | `CmdOrCtrl+Alt+Up`     |
-| Move note up        | `moveNoteUp`       | `CmdOrCtrl+Shift+Up`   |
-| Move note down      | `moveNoteDown`     | `CmdOrCtrl+Shift+Down` |
-| Move note to bottom | `moveNoteToBottom` | `CmdOrCtrl+Alt+Down`   |
+| Command Label | Command ID | Default Key | UI Locations |
+| ------------- | ---------- | ----------- | ------------ |
+| Set URL       | `editURL`  | -           | -            |
 
 TODO describe more detailed...
 
-> **NOTE** TODO works only in custom order mode
+#### Open URL in browser
 
-## Mapped commands
+| Command Label       | Command ID         | Default Key            | UI Locations |
+| ------------------- | ------------------ | ---------------------- | ------------ |
+| Open URL in browser | `openURLInBrowser` | `-`                    | Note toolbar |
 
-## User options
+TODO describe more detailed...
+
+#### Move notes
+
+| Command Label       | Command ID         | Default Key            | UI Locations |
+| ------------------- | ------------------ | ---------------------- | ------------ |
+| Move note to top    | `moveNoteToTop`    | `CmdOrCtrl+Alt+Up`     | Context menu |
+| Move note up        | `moveNoteUp`       | `CmdOrCtrl+Shift+Up`   | Context menu |
+| Move note down      | `moveNoteDown`     | `CmdOrCtrl+Shift+Down` | Context menu |
+| Move note to bottom | `moveNoteToBottom` | `CmdOrCtrl+Alt+Down`   | Context menu |
+
+Change the position of a note in the current note list if 'Custom order' sort is active.
+
+> **NOTE** - Sorting in `All notes` list is _not_ possible.
+
+### Mapped commands
+
+The following internal commands are mapped to main menu entries. This allows to assign keyboard shortcuts to them.
+ 
+| Menu    | Command Label       | Command ID         | Default Key            |
+| --------| ------------------- | ------------------ | ---------------------- |
+| Edit    | Checkbox            | `textCheckbox`     | -                      |
+| Note    | Move to notebook    | `moveToFolder`     | `CmdOrCtrl+Shift+M`    |
+| Note    | Set alarm           | `editAlarm`        | -                      |
+| TODO | | | |
+
+### User options
 
 This plugin adds the following user options which can be accessed via `Tools > Options > Note Extensions`.
 
-> **NOTE** - TODO changing requires restart
+> **NOTE** - Changes to the user options are only applied after a restart of the app.
 
 - Show [Toggle to-do state](#toggle-to-do-state) button on note toolbar:\
   _Select whether an button for the command shall be shown on the note toolbar (next to note title) or not_
 
 > TODO - Add user options here...
-
-### UI enhancements
-
-This plugin adds the following elements to the UI.
-
-To get the best result, check out the [UI tweaks](#ui-tweaks) also.
-
-> TODO - describe additions to the UI (with screenshots, if available)
-> New panels, views, dialogs, ... in sub-chapters
-> Otherwise remove chapters
 
 ## Installation
 
