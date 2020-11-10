@@ -1,10 +1,9 @@
 import joplin from "api";
 import JoplinViewsDialogs from "api/JoplinViewsDialogs";
+// import JoplinViewsDialogs from "api/JoplinViewsDialogs";
 import { MenuItemLocation, ToolbarButtonLocation } from 'api/types';
-import { info } from "console";
 
 const copy = require('../node_modules/copy-to-clipboard');
-
 // const open = require('open');
 // const { shell } = require('electron');
 
@@ -14,10 +13,10 @@ const accToggleTodoState = 'CmdOrCtrl+Shift+Space';
 const accMoveToFolder = 'CmdOrCtrl+Shift+M';
 // API: Internal shortcuts may override these ones here
 //      E.g. if note-list has focus - the "Up" key is always considered to change the selected note in the list
-const accMoveNoteToTop = 'CmdOrCtrl+Shift+Alt+Up';
-const accMoveNoteUp = 'CmdOrCtrl+Alt+Up';
-const accMoveNoteDown = 'CmdOrCtrl+Alt+Down';
-const accMoveNoteToBottom = 'CmdOrCtrl+Shift+Alt+Down';
+const accMoveToTop = 'CmdOrCtrl+Shift+Alt+Up';
+const accMoveUp = 'CmdOrCtrl+Alt+Up';
+const accMoveDown = 'CmdOrCtrl+Alt+Down';
+const accMoveToBottom = 'CmdOrCtrl+Shift+Alt+Down';
 
 joplin.plugins.register({
   onStart: async function () {
@@ -30,7 +29,7 @@ joplin.plugins.register({
 
     await joplin.settings.registerSection('joplin-note-ext', {
       label: 'Note Extensions',
-      iconName: 'fas fa-file-medical', // TODO icon? tachometer-alt
+      iconName: 'fas fa-file-medical', // TODO icon: tachometer-alt?
       description: 'Note: Changes are only applied after a restart.'
     });
 
@@ -61,16 +60,19 @@ joplin.plugins.register({
       label: 'Toggle to-do state',
       iconName: 'fas fa-check',
       // API: Disabling commands with "enabledCondition" has no effect in note context menu
-      enabledCondition: "noteIsTodo && oneNoteSelected",
+      enabledCondition: "noteIsTodo && oneNoteSelected && !inConflictFolder",
       execute: async () => {
-        const note = await joplin.workspace.selectedNote();
-        if (note.todo_completed) {
-          await joplin.data.put(['notes', note.id], null, { todo_completed: 0 });
+        // get the selected note and exit if none is currently selected
+        const selectedNote = await joplin.workspace.selectedNote();
+        if (!selectedNote) return;
+
+        if (selectedNote.todo_completed) {
+          await joplin.data.put(['notes', selectedNote.id], null, { todo_completed: 0 });
         } else {
-          await joplin.data.put(['notes', note.id], null, { todo_completed: Date.now() });
+          await joplin.data.put(['notes', selectedNote.id], null, { todo_completed: Date.now() });
         }
 
-        // implementation to toggle state for multiple todos - seems to cause errors
+        // implementation to toggle state for multiple todos - not sure if it works correct
         // const noteIds = await joplin.workspace.selectedNoteIds();
         // for (let i = 0; i < noteIds.length; i++) {
         //   const note = await joplin.data.get(['notes', noteIds[i]], { fields: ['todo_completed'] });
@@ -92,25 +94,17 @@ joplin.plugins.register({
       label: 'Copy note ID',
       iconName: 'fas fa-copy',
       execute: async () => {
-        const noteIds = await joplin.workspace.selectedNoteIds();
+        // get the selected note IDs and exit if none is currently selected
+        const selectedNoteIds = await joplin.workspace.selectedNoteIds();
+        if (!selectedNoteIds) return;
+
+        // copy each ID to clipboard
         const ids = [];
-        for (let i = 0; i < noteIds.length; i++) {
-          const note = await joplin.data.get(['notes', noteIds[i]], { fields: ['id'] });
+        for (let i = 0; i < selectedNoteIds.length; i++) {
+          const note = await joplin.data.get(['notes', selectedNoteIds[i]], { fields: ['id'] });
           ids.push(note.id);
         }
         copy(ids.join('\n'));
-      },
-    });
-
-    // Command: touchNote
-    // Desc: Set 'updated_time' of selected note to current timestamp
-    await joplin.commands.register({
-      name: 'touchNote',
-      label: 'Touch note',
-      iconName: 'fas fa-hand-point-up',
-      execute: async () => {
-        const note = await joplin.workspace.selectedNote();
-        await joplin.data.put(['notes', note.id], null, { updated_time: Date.now() });
       },
     });
 
@@ -120,28 +114,30 @@ joplin.plugins.register({
       name: 'editURL',
       label: 'Set URL',
       iconName: 'fas fa-edit',
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
-        const note = await joplin.workspace.selectedNote();
-        const dialogs = joplin.views.dialogs;
-        const urlDialog = await dialogs.create();
+        // get the selected note and exit if none is currently selected
+        const selectedNote = await joplin.workspace.selectedNote();
+        if (!selectedNote) return;
 
+        // create new dialog
         // API: dialog box is fixed to width which cannot be overwritten by plugin itself
         //      Adding "width: fit-content;" to parent container div#joplin-plugin-content fixes the problem
+        const dialogs = joplin.views.dialogs;
+        const urlDialog = await dialogs.create();
         await dialogs.setHtml(urlDialog, `
-          <div class="joplin-note-ext-dialog" style="display:inline-flex;">
-            <label style="min-width:fit-content;margin:auto;padding-right:8px;">Set URL:</label>
-            <input type="text" value="${note.source_url}" style="min-width:300px;">
+          <div class="joplin-note-ext-dialog" style="display:inline-flex; min-width:300px;">
+            <label style="min-width:fit-content; margin:auto; padding-right:5px;">Set URL:</label>
+            <input type="text" style="width:100%;" value="${selectedNote.source_url}">
           </div>
         `);
         const result = await dialogs.open(urlDialog);
 
+        // get return and new URL value
         if (result == 'ok') {
           // API: How to get feedback from a dialog? PostMessage?
           alert('This button was clicked: ' + result);
         }
-
-        // TODO open dialog with input box - if URL already set - display this value in the input box
-        // alert('Sorry, this command is currently not implemented...');
       },
     });
 
@@ -151,84 +147,158 @@ joplin.plugins.register({
       name: 'openURLInBrowser',
       label: 'Open URL in browser',
       iconName: 'fas fa-globe',
+      // TODO enableCondition possible? only if URL is set
       enabledCondition: "oneNoteSelected",
       execute: async () => {
-        const note = await joplin.workspace.selectedNote();
-        if (note.source_url) {
-          // await open("http://www.google.com");
-          // window.open("http://www.google.com", '_blank');
-          // open(note.source_url);
-          alert(`Open URL: ${note.source_url}`);
-        }
+        // get the selected note and exit if none is currently selected
+        const selectedNote = await joplin.workspace.selectedNote();
+        if (!selectedNote) return;
 
-        // TODO if url is set open link in default browser
-        // TODO enableCondition possible? only if URL is set
+        // exit if 'source_url' is not set for note
+        if (!selectedNote.source_url) return;
 
+        // open URL in default browser
+        // TODO
+        // 1: from joplin code - does not work
         // const bridge = require('electron').remote.require('./bridge').default;
         // bridge().openExternal(url)
 
-        // oder
+        // 2: electron shell - does not work
         // const { shell } = require('electron')
         // shell.openExternal('https://github.com')
 
-        // oder
+        // 3: npm open - does not work
         // https://github.com/pwnall/node-open
+        // https://www.npmjs.com/package/open
+        // first: npm install open
+        // await open("http://www.google.com");
+        // await open(note.source_url);
 
-        alert('Sorry, this command is currently not implemented...');
+        // 4: built in open command - does not work
+        // open('https://www.google.com', '_blank');
+        open(selectedNote.source_url, '_blank');
+
+        await joplin.views.dialogs.showMessageBox(`Open URL: ${selectedNote.source_url}`);
       },
     });
 
-    // Command: moveNoteToTop
+    // Command: touchNote
+    // Desc: Set 'updated_time' of selected note to current timestamp
+    await joplin.commands.register({
+      name: 'touchNote',
+      label: 'Touch note',
+      iconName: 'fas fa-hand-pointer',
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
+      execute: async () => {
+        // get the selected note and exit if none is currently selected
+        const selectedNote = await joplin.workspace.selectedNote();
+        if (!selectedNote) return;
+
+        // set 'updated_time' to current timestamp value
+        await joplin.data.put(['notes', selectedNote.id], null, { updated_time: Date.now() });
+      },
+    });
+
+    // Command: moveToTop
     // Desc: todo
     await joplin.commands.register({
-      name: 'moveNoteToTop',
-      label: 'Move note to top',
+      name: 'moveToTop',
+      label: 'Move to top',
       iconName: 'fas fa-angle-double-up',
+      // TODO check if disabling is possible in case of other sort type
+      // TODO enabledCondtion == !firstInList?
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
-        // TODO should only work when custom order is active
-        // TODO check if disabling is possible in case of other sort type
-        // TODO enabledCondtion == !firstInList?
-        const todo = await joplin.workspace.selectedNote();
-        await joplin.data.put(['notes', todo.id], null, { order: Date.now() });
+        // get the selected note and exit if none is currently selected
+        const selectedNote = await joplin.workspace.selectedNote();
+        if (!selectedNote) return;
+
+        // get the note sort order and exit if not custom order
+        const sortOrder = await joplin.settings.globalValue("notes.sortOrder.field");
+        if (sortOrder != 'order') return;
+
+        // set 'order' to current timestamp value
+        await joplin.data.put(['notes', selectedNote.id], null, { order: Date.now() });
       },
     });
 
-    // Command: moveNoteUp
+    // Command: moveUp
     // Desc: todo
     await joplin.commands.register({
-      name: 'moveNoteUp',
-      label: 'Move note up',
+      name: 'moveUp',
+      label: 'Move up',
       iconName: 'fas fa-angle-up',
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
+        // TODO use this style for each command
+        // get the selected note and exit if none is currently selected
+        const selectedNote = await joplin.workspace.selectedNote();
+        if (!selectedNote) return;
+
+        // get the note sort order and exit if not custom order
+        const sortOrder = await joplin.settings.globalValue("notes.sortOrder.field");
+        if (sortOrder != 'order') return;
+
+        // search for all notes in the same folder and exit if empty
+        // TODO what is "let" meant for?
+        let notes = await joplin.data.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['title', 'parent_id', 'order'] });
+        if (!notes.length) return;
+
         // TODO implement this command
         // TODO get order value from previous note > set this order to: <previous-order> - 1?
-        alert('Sorry, this command is currently not implemented...');
+
+        // copy result to clipboard for test purposes
+        const ids = [];
+        ids.push('Copied notes:');
+        ids.push('title,parent_id,order');
+        for (let i = 0; i < notes.length; i++) {
+          ids.push(`${notes[i].title}, ${notes[i].parent_id}, ${notes[i].order}`);
+        }
+        copy(ids.join('\n'));
       },
     });
 
-    // Command: moveNoteDown
+    // Command: moveDown
     // Desc: todo
     await joplin.commands.register({
-      name: 'moveNoteDown',
-      label: 'Move note down',
+      name: 'moveDown',
+      label: 'Move down',
       iconName: 'fas fa-angle-down',
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
+        // get the selected note and exit if none is currently selected
+        const selectedNote = await joplin.workspace.selectedNote();
+        if (!selectedNote) return;
+
+        // get the note sort order and exit if not custom order
+        const sortOrder = await joplin.settings.globalValue("notes.sortOrder.field");
+        if (sortOrder != 'order') return;
+
         // TODO implement this command
         // TODO get order value from next note > set this order to: <next-order> + 1?
-        alert('Sorry, this command is currently not implemented...');
+        await joplin.views.dialogs.showMessageBox('Sorry, this command is currently not implemented...');
       },
     });
 
-    // Command: moveNoteToBottom
+    // Command: moveToBottom
     // Desc: todo
     await joplin.commands.register({
-      name: 'moveNoteToBottom',
-      label: 'Move note to bottom',
+      name: 'moveToBottom',
+      label: 'Move to bottom',
       iconName: 'fas fa-angle-double-down',
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
+        // get the selected note and exit if none is currently selected
+        const selectedNote = await joplin.workspace.selectedNote();
+        if (!selectedNote) return;
+
+        // get the note sort order and exit if not custom order
+        const sortOrder = await joplin.settings.globalValue("notes.sortOrder.field");
+        if (sortOrder != 'order') return;
+
         // TODO implement this command
         // TODO enabledCondtion == !LastInLast?
-        alert('Sorry, this command is currently not implemented...');
+        await joplin.views.dialogs.showMessageBox('Sorry, this command is currently not implemented...');
       },
     });
 
@@ -239,7 +309,7 @@ joplin.plugins.register({
     // prepare "Note properties" sub-menu
     const notePropertiesSubMenu = [
       {
-        // API: sub-menu entries are not shown in keyboard editor unless it has a default accelarator (or manually added to keymap.json)
+        // API: sub-menu entries are not shown in keyboard editor unless they have a default accelarator (or manually added to keymap.json)
         commandName: "copyNoteId",
       },
       {
@@ -250,26 +320,29 @@ joplin.plugins.register({
       },
       {
         commandName: "openURLInBrowser"
+      },
+      {
+        commandName: "touchNote",
       }
     ]
 
-    // prepare "move note" sub-menu
+    // prepare "Move in list" sub-menu
     const moveNoteSubMenu = [
       {
-        commandName: "moveNoteToTop",
-        accelerator: accMoveNoteToTop
+        commandName: "moveToTop",
+        accelerator: accMoveToTop
       },
       {
-        commandName: "moveNoteUp",
-        accelerator: accMoveNoteUp
+        commandName: "moveUp",
+        accelerator: accMoveUp
       },
       {
-        commandName: "moveNoteDown",
-        accelerator: accMoveNoteDown
+        commandName: "moveDown",
+        accelerator: accMoveDown
       },
       {
-        commandName: "moveNoteToBottom",
-        accelerator: accMoveNoteToBottom
+        commandName: "moveToBottom",
+        accelerator: accMoveToBottom
       }
     ];
 
