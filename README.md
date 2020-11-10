@@ -2,9 +2,9 @@
 
 _joplin-note-ext_ is a plugin to extend the UX and UI of [Joplin's](https://joplinapp.org/) desktop application.
 
-It provides a set of [features](#features) to enhance working with notes and to-dos.
+It provides [features](#features) to enhance working with notes and to-dos.
 
-> **NOTE** - This plugin requires at least Joplin v1.3.9!
+> **NOTE** - This plugin requires at least **Joplin v1.3.9**!
 
 ## Table of contents
 
@@ -38,17 +38,16 @@ It provides a set of [features](#features) to enhance working with notes and to-
 
 This plugin provides the new commands as described in the following chapters.
 
-- Each command is added to the `Note` main menu entry
-- Column `UI Locations` describes where the command can additionally be added to the UI.
+- Column `Additional UI Locations` describes where the command can additionally be added to the UI
   - Whether the command is displayed or not can be set in the [user options](#user-options)
 - Default keyboard shortcuts can be changed in user options
-  - Navigate to `Tools > Options > Keyboard Shortcuts` and search for the command label to be changed.
+  - Navigate to `Tools > Options > Keyboard Shortcuts` and search for the command label to be changed
 
 #### Toggle to-do state
 
-| Command Label      | Command ID        | Default Key             | UI Locations               |
-| ------------------ | ----------------- | ----------------------- | -------------------------- |
-| Toggle to-do state | `toggleTodoState` | `CmdOrCtrl+Shift+Space` | Note context, Note toolbar |
+| Command Label      | Command ID        | Default Key             | Menu   | Additional UI Locations       |
+| ------------------ | ----------------- | ----------------------- | ------ | ----------------------------- |
+| Toggle to-do state | `toggleTodoState` | `CmdOrCtrl+Shift+Space` | `Note` | Note context,<br>Note toolbar |
 
 Set the status of the selected to-do to either completed or open.
 
@@ -56,51 +55,51 @@ Set the status of the selected to-do to either completed or open.
 
 #### Copy note ID
 
-| Command Label | Command ID   | Default Key | UI Locations |
-| ------------- | ------------ | ----------- | ------------ |
-| Copy note ID  | `copyNoteId` | -           | Note context |
+| Command Label | Command ID   | Default Key | Menu                     | Additional UI Locations |
+| ------------- | ------------ | ----------- | ------------------------ | ----------------------- |
+| Copy note ID  | `copyNoteId` | -           | `Note > Note properties` | Note context            |
 
 Copy the IDs of all selected notes to the clipboard.
 
-#### Touch note
-
-| Command Label | Command ID  | Default Key | UI Locations |
-| ------------- | ----------- | ----------- | ------------ |
-| Touch note    | `touchNote` | -           | -            |
-
-"Touch" the last updated timestamp of the selected note and set it to now.
-Useful to move a note to the top of a list when the 'Updated date' sort is active.
-
-> **NOTE** - The title or content of the note are _not_ changed.
-
 #### Set URL
 
-| Command Label | Command ID | Default Key | UI Locations |
-| ------------- | ---------- | ----------- | ------------ |
-| Set URL       | `editURL`  | -           | -            |
+| Command Label | Command ID | Default Key | Menu                     | Additional UI Locations |
+| ------------- | ---------- | ----------- | ------------------------ | ----------------------- |
+| Set URL       | `editURL`  | -           | `Note > Note properties` | -                       |
 
 TODO describe more detailed...
 
 #### Open URL in browser
 
-| Command Label       | Command ID         | Default Key | UI Locations |
-| ------------------- | ------------------ | ----------- | ------------ |
-| Open URL in browser | `openURLInBrowser` | `-`         | Note toolbar |
+| Command Label       | Command ID         | Default Key | Menu                     | Additional UI Locations |
+| ------------------- | ------------------ | ----------- | ------------------------ | ----------------------- |
+| Open URL in browser | `openURLInBrowser` | `-`         | `Note > Note properties` | Note toolbar            |
 
 TODO describe more detailed...
 
-#### Move notes
+#### Touch note
 
-| Command Label       | Command ID         | Default Key                | UI Locations |
-| ------------------- | ------------------ | -------------------------- | ------------ |
-| Move note to top    | `moveNoteToTop`    | `CmdOrCtrl+Shift+Alt+Up`   | Note context |
-| Move note up        | `moveNoteUp`       | `CmdOrCtrl+Alt+Up`         | Note context |
-| Move note down      | `moveNoteDown`     | `CmdOrCtrl+Alt+Down`       | Note context |
-| Move note to bottom | `moveNoteToBottom` | `CmdOrCtrl+Shift+Alt+Down` | Note context |
+| Command Label | Command ID  | Default Key | Menu                     | Additional UI Locations |
+| ------------- | ----------- | ----------- | ------------------------ | ----------------------- |
+| Touch note    | `touchNote` | -           | `Note > Note properties` | -                       |
+
+"Touch" the last updated timestamp of the selected note and set it to now.
+Useful to move a note to the top of a list when the 'Updated date' sort is active.
+
+> **NOTE** - Title or content of the note are _not_ changed
+
+#### Move notes in list
+
+| Command Label  | Command ID     | Default Key                | Menu                  | Additional UI Locations |
+| -------------- | -------------- | -------------------------- | --------------------- | ----------------------- |
+| Move to top    | `moveToTop`    | `CmdOrCtrl+Shift+Alt+Up`   | `Note > Move in list` | Note context            |
+| Move up        | `moveUp`       | `CmdOrCtrl+Alt+Up`         | `Note > Move in list` | Note context            |
+| Move down      | `moveDown`     | `CmdOrCtrl+Alt+Down`       | `Note > Move in list` | Note context            |
+| Move to bottom | `moveToBottom` | `CmdOrCtrl+Shift+Alt+Down` | `Note > Move in list` | Note context            |
 
 Change the position of a note in the current note list if 'Custom order' sort is active.
 
-> **NOTE** - Sorting in `All notes` list is _not_ possible.
+> **NOTE** - Sorting in `All notes` is _not_ possible
 
 ### Mapped commands
 
@@ -116,7 +115,7 @@ The following internal commands are mapped to main menu entries. This allows to 
 
 This plugin adds the following user options which can be accessed via `Tools > Options > Note Extensions`.
 
-> **NOTE** - Changes to the user options are only applied after a restart of the app.
+> **NOTE** - Changes to the user options are only applied after a restart of the app
 
 - Show [Open URL in browser](#open-url-in-browser) on note toolbar:\
   _Select whether a button for the command shall be shown on the note toolbar (next to note title) or not_
