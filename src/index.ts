@@ -84,7 +84,7 @@ joplin.plugins.register({
         //     }
         //   }
         // }
-      },
+      }
     });
 
     // Command: copyNoteId
@@ -101,11 +101,14 @@ joplin.plugins.register({
         // copy each ID to clipboard
         const ids = [];
         for (let i = 0; i < selectedNoteIds.length; i++) {
+
+          // TODO consider pagination here
+          // https://joplinapp.org/api/references/rest_api/#pagination
           const note = await joplin.data.get(['notes', selectedNoteIds[i]], { fields: ['id'] });
           ids.push(note.id);
         }
         copy(ids.join('\n'));
-      },
+      }
     });
 
     // Command: editURL
@@ -135,10 +138,11 @@ joplin.plugins.register({
 
         // get return and new URL value
         if (result == 'ok') {
-          // API: How to get feedback from a dialog? PostMessage?
-          alert('This button was clicked: ' + result);
+          // TODO: wait for extended dialog support
+          // https://discourse.joplinapp.org/t/how-to-get-feedback-user-input-from-a-dialog/12380/6
+          alert('Sorry... this is currently not supported.');
         }
-      },
+      }
     });
 
     // Command: openURLInBrowser
@@ -146,7 +150,7 @@ joplin.plugins.register({
     await joplin.commands.register({
       name: 'openURLInBrowser',
       label: 'Open URL in browser',
-      iconName: 'fas fa-globe',
+      iconName: 'fas fa-external-link-square-alt',
       // TODO enableCondition possible? only if URL is set
       enabledCondition: "oneNoteSelected",
       execute: async () => {
@@ -158,14 +162,16 @@ joplin.plugins.register({
         if (!selectedNote.source_url) return;
 
         // open URL in default browser
-        // TODO
+        // TODO wait for feedback from forum
+        // https://discourse.joplinapp.org/t/how-to-open-url-in-default-browser-from-plugin/12376
+        
         // 1: from joplin code - does not work
         // const bridge = require('electron').remote.require('./bridge').default;
-        // bridge().openExternal(url)
+        // bridge().openExternal(url);
 
         // 2: electron shell - does not work
-        // const { shell } = require('electron')
-        // shell.openExternal('https://github.com')
+        // const { shell } = require('electron');
+        // shell.openExternal('https://github.com');
 
         // 3: npm open - does not work
         // https://github.com/pwnall/node-open
@@ -176,10 +182,10 @@ joplin.plugins.register({
 
         // 4: built in open command - does not work
         // open('https://www.google.com', '_blank');
-        open(selectedNote.source_url, '_blank');
+        // open(selectedNote.source_url, '_blank');
 
         await joplin.views.dialogs.showMessageBox(`Open URL: ${selectedNote.source_url}`);
-      },
+      }
     });
 
     // Command: touchNote
@@ -219,7 +225,7 @@ joplin.plugins.register({
 
         // set 'order' to current timestamp value
         await joplin.data.put(['notes', selectedNote.id], null, { order: Date.now() });
-      },
+      }
     });
 
     // Command: moveUp
@@ -230,7 +236,6 @@ joplin.plugins.register({
       iconName: 'fas fa-angle-up',
       enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
-        // TODO use this style for each command
         // get the selected note and exit if none is currently selected
         const selectedNote = await joplin.workspace.selectedNote();
         if (!selectedNote) return;
@@ -240,12 +245,15 @@ joplin.plugins.register({
         if (sortOrder != 'order') return;
 
         // search for all notes in the same folder and exit if empty
+        // TODO see here how to order_by: https://joplinapp.org/api/references/rest_api/#pagination
+        // TODO consider pagination also
         // TODO what is "let" meant for?
         let notes = await joplin.data.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['title', 'parent_id', 'order'] });
         if (!notes.length) return;
 
         // TODO implement this command
         // TODO get order value from previous note > set this order to: <previous-order> - 1?
+        // Check out joplin drag&drop implementation
 
         // copy result to clipboard for test purposes
         const ids = [];
@@ -255,7 +263,7 @@ joplin.plugins.register({
           ids.push(`${notes[i].title}, ${notes[i].parent_id}, ${notes[i].order}`);
         }
         copy(ids.join('\n'));
-      },
+      }
     });
 
     // Command: moveDown
@@ -277,7 +285,7 @@ joplin.plugins.register({
         // TODO implement this command
         // TODO get order value from next note > set this order to: <next-order> + 1?
         await joplin.views.dialogs.showMessageBox('Sorry, this command is currently not implemented...');
-      },
+      }
     });
 
     // Command: moveToBottom
@@ -286,6 +294,7 @@ joplin.plugins.register({
       name: 'moveToBottom',
       label: 'Move to bottom',
       iconName: 'fas fa-angle-double-down',
+      // TODO enabledCondtion == !LastInLast?
       enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
         // get the selected note and exit if none is currently selected
@@ -297,9 +306,8 @@ joplin.plugins.register({
         if (sortOrder != 'order') return;
 
         // TODO implement this command
-        // TODO enabledCondtion == !LastInLast?
         await joplin.views.dialogs.showMessageBox('Sorry, this command is currently not implemented...');
-      },
+      }
     });
 
     //#endregion
