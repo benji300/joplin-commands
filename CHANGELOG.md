@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-> Requires Joplin v1.4.9!
+> **Requires Joplin v1.4.10!**
 
 * Initial Release
 

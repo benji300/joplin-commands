@@ -4,7 +4,7 @@ _joplin-note-ext_ is a plugin to extend the UX and UI of [Joplin's](https://jopl
 
 It provides [features](#features) to enhance working with notes and to-dos.
 
-> **NOTE** - This plugin requires at least **Joplin v1.4.9**!
+> **NOTE** - This plugin requires at least **Joplin v1.4.10**!
 
 ## Table of contents
 
