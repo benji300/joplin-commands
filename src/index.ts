@@ -8,8 +8,6 @@ const copy = require('../node_modules/copy-to-clipboard');
 const accTextCheckbox = 'CmdOrCtrl+Shift+C';
 const accToggleTodoState = 'CmdOrCtrl+Shift+Space';
 const accMoveToFolder = 'CmdOrCtrl+Shift+M';
-// API: Internal shortcuts may override these ones here
-//      E.g. if note-list has focus - the "Up" key is always considered to change the selected note in the list
 const accMoveToTop = 'CmdOrCtrl+Shift+Alt+Up';
 const accMoveUp = 'CmdOrCtrl+Alt+Up';
 const accMoveDown = 'CmdOrCtrl+Alt+Down';
@@ -34,14 +32,14 @@ joplin.plugins.register({
       description: 'Note: Changes are only applied after a restart.'
     });
 
-    await SETTINGS.registerSetting('showOpenURLInBrowserToolbar', {
-      value: false,
-      type: 3,
-      section: 'joplin-note-ext',
-      public: true,
-      label: 'Show "Open URL in browser" on note toolbar',
-      description: 'Select whether a button to open the note URL in the default browser shall be shown on the note toolbar or not.'
-    });
+    // await SETTINGS.registerSetting('showOpenURLInBrowserToolbar', {
+    //   value: false,
+    //   type: 3,
+    //   section: 'joplin-note-ext',
+    //   public: true,
+    //   label: 'Show "Open URL in browser" on note toolbar',
+    //   description: 'Select whether a button to open the note URL in the default browser shall be shown on the note toolbar or not.'
+    // });
 
     await SETTINGS.registerSetting('showToggleTodoStateToolbar', {
       value: false,
@@ -62,7 +60,6 @@ joplin.plugins.register({
       name: 'toggleTodoState',
       label: 'Toggle to-do state',
       iconName: 'fas fa-check',
-      // API: Disabling commands with "enabledCondition" has no effect in note context menu
       enabledCondition: "noteIsTodo && oneNoteSelected && !inConflictFolder",
       execute: async () => {
         // get the selected note and exit if none is currently selected
@@ -104,9 +101,6 @@ joplin.plugins.register({
         // copy each ID to clipboard
         const ids = [];
         for (let i = 0; i < selectedNoteIds.length; i++) {
-
-          // TODO consider pagination here
-          // https://joplinapp.org/api/references/rest_api/#pagination
           const note = await DATA.get(['notes', selectedNoteIds[i]], { fields: ['id'] });
           ids.push(note.id);
         }
@@ -115,7 +109,7 @@ joplin.plugins.register({
     });
 
     // Command: editURL
-    // Desc: todo
+    // Desc: Opens dialog to directly edit the URL of the note
     await COMMANDS.register({
       name: 'editURL',
       label: 'Set URL',
@@ -142,61 +136,58 @@ joplin.plugins.register({
         // get return and new URL value
         if (result.id == 'ok') {
           if (result.formData != null) {
-            // let test = JSON.stringify(result);
-            // await DIALOGS.showMessageBox(`Result: ${test}`);
             const newUrl = result.formData.urlForm.url as string;
-
             const boxResult = await DIALOGS.showMessageBox(`Set URL to: ${newUrl}`);
-            if (boxResult != 0) return;
-
-            await DATA.put(['notes', selectedNote.id], null, { source_url: newUrl });
+            if (boxResult == 0) {
+              await DATA.put(['notes', selectedNote.id], null, { source_url: newUrl });
+            }
           }
         }
       }
     });
 
-    // Command: openURLInBrowser
-    // Desc: todo
-    await COMMANDS.register({
-      name: 'openURLInBrowser',
-      label: 'Open URL in browser',
-      iconName: 'fas fa-external-link-square-alt',
-      // TODO enableCondition possible? only if URL is set
-      enabledCondition: "oneNoteSelected",
-      execute: async () => {
-        // get the selected note and exit if none is currently selected
-        const selectedNote = await WORKSPACE.selectedNote();
-        if (!selectedNote) return;
+    // // Command: openURLInBrowser
+    // // Desc: todo
+    // await COMMANDS.register({
+    //   name: 'openURLInBrowser',
+    //   label: 'Open URL in browser',
+    //   iconName: 'fas fa-external-link-square-alt',
+    //   // TODO enableCondition possible? only if URL is set
+    //   enabledCondition: "oneNoteSelected",
+    //   execute: async () => {
+    //     // get the selected note and exit if none is currently selected
+    //     const selectedNote = await WORKSPACE.selectedNote();
+    //     if (!selectedNote) return;
 
-        // exit if 'source_url' is not set for note
-        if (!selectedNote.source_url) return;
+    //     // exit if 'source_url' is not set for note
+    //     if (!selectedNote.source_url) return;
 
-        // open URL in default browser
-        // TODO wait for feedback from forum
-        // https://discourse.joplinapp.org/t/how-to-open-url-in-default-browser-from-plugin/12376
+    //     // open URL in default browser
+    //     // TODO wait for feedback from forum
+    //     // https://discourse.joplinapp.org/t/how-to-open-url-in-default-browser-from-plugin/12376
 
-        // 1: from joplin code - does not work
-        // const bridge = require('electron').remote.require('./bridge').default;
-        // bridge().openExternal(url);
+    //     // 1: from joplin code - does not work
+    //     // const bridge = require('electron').remote.require('./bridge').default;
+    //     // bridge().openExternal(url);
 
-        // 2: electron shell - does not work
-        // const { shell } = require('electron');
-        // shell.openExternal('https://github.com');
+    //     // 2: electron shell - does not work
+    //     // const { shell } = require('electron');
+    //     // shell.openExternal('https://github.com');
 
-        // 3: npm open - does not work
-        // https://github.com/pwnall/node-open
-        // https://www.npmjs.com/package/open
-        // first: npm install open
-        // await open("http://www.google.com");
-        // await open(note.source_url);
+    //     // 3: npm open - does not work
+    //     // https://github.com/pwnall/node-open
+    //     // https://www.npmjs.com/package/open
+    //     // first: npm install open
+    //     // await open("http://www.google.com");
+    //     // await open(note.source_url);
 
-        // 4: built in open command - does not work
-        // open('https://www.google.com', '_blank');
-        // open(selectedNote.source_url, '_blank');
+    //     // 4: built in open command - does not work
+    //     // open('https://www.google.com', '_blank');
+    //     // open(selectedNote.source_url, '_blank');
 
-        await DIALOGS.showMessageBox(`Open URL: ${selectedNote.source_url}`);
-      }
-    });
+    //     await DIALOGS.showMessageBox(`Open URL: ${selectedNote.source_url}`);
+    //   }
+    // });
 
     // Command: touchNote
     // Desc: Set 'updated_time' of selected note to current timestamp
@@ -216,7 +207,7 @@ joplin.plugins.register({
     });
 
     // Command: moveToTop
-    // Desc: todo
+    // Desc: Moves the current selected note to the top of the list
     await COMMANDS.register({
       name: 'moveToTop',
       label: 'Move to top',
@@ -258,6 +249,8 @@ joplin.plugins.register({
         // TODO see here how to order_by: https://joplinapp.org/api/references/rest_api/#pagination
         // TODO consider pagination also
         // TODO what is "let" meant for?
+        // let test = JSON.stringify(result);
+        // await DIALOGS.showMessageBox(`Result: ${test}`);
         let notes = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['title', 'parent_id', 'order'] });
         if (!notes.length) return;
 
@@ -299,7 +292,7 @@ joplin.plugins.register({
     });
 
     // Command: moveToBottom
-    // Desc: todo
+    // Desc: Moves the current selected note to the bottom of the list
     await COMMANDS.register({
       name: 'moveToBottom',
       label: 'Move to bottom',
@@ -327,7 +320,6 @@ joplin.plugins.register({
     // prepare "Note properties" sub-menu
     const notePropertiesSubMenu = [
       {
-        // API: sub-menu entries are not shown in keyboard editor unless they have a default accelarator (or manually added to keymap.json)
         commandName: "copyNoteId",
       },
       {
@@ -336,9 +328,9 @@ joplin.plugins.register({
       {
         commandName: "editURL"
       },
-      {
-        commandName: "openURLInBrowser"
-      },
+      // {
+      //   commandName: "openURLInBrowser"
+      // },
       {
         commandName: "touchNote",
       }
@@ -381,11 +373,10 @@ joplin.plugins.register({
     // await joplin.views.menuItems.create('conListCopyNoteId', 'copyNoteId', MenuItemLocation.NoteListContextMenu);
 
     // add commands to note toolbar depending on user options
-    // API: Icons in toolbar seems to be bigger than the default ones
-    const showOpenURLInBrowserToolbar = await SETTINGS.value('showOpenURLInBrowserToolbar');
-    if (showOpenURLInBrowserToolbar) {
-      await joplin.views.toolbarButtons.create('barNoteOpenURLInBrowser', 'openURLInBrowser', ToolbarButtonLocation.NoteToolbar);
-    }
+    // const showOpenURLInBrowserToolbar = await SETTINGS.value('showOpenURLInBrowserToolbar');
+    // if (showOpenURLInBrowserToolbar) {
+    //   await joplin.views.toolbarButtons.create('barNoteOpenURLInBrowser', 'openURLInBrowser', ToolbarButtonLocation.NoteToolbar);
+    // }
     const showToggleTodoStateToolbar = await SETTINGS.value('showToggleTodoStateToolbar');
     if (showToggleTodoStateToolbar) {
       await joplin.views.toolbarButtons.create('barNoteToggleTodoState', 'toggleTodoState', ToolbarButtonLocation.NoteToolbar);

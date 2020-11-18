@@ -73,9 +73,11 @@ Copy the IDs of all selected notes to the clipboard.
 | ------------- | ---------- | ----------- | ------------------------ | ----------------------- |
 | Set URL       | `editURL`  | -           | `Note > Note properties` | -                       |
 
-TODO describe more detailed...
+Opens dialog to directly edit the URL of the note.
 
 #### Open URL in browser
+
+> :warning: This command is urrently not implemented!
 
 | Command Label       | Command ID         | Default Key | Menu                     | Additional UI Locations |
 | ------------------- | ------------------ | ----------- | ------------------------ | ----------------------- |
