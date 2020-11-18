@@ -4,17 +4,23 @@ _joplin-note-ext_ is a plugin to extend the UX and UI of [Joplin's](https://jopl
 
 It provides [features](#features) to enhance working with notes and to-dos.
 
-> **NOTE** - This plugin requires at least **Joplin v1.4.10**!
+> :warning: **CAUTION** - This theme requires at least version **v1.4.10**
 
 ## Table of contents
 
 - [Features](#features)
-  - [New commands](#new-commands)
-  - [Mapped commands](#mapped-commands)
+  - [Commands](#commands)
+    - [Toggle to-do state](#toggle-to-do-state)
+    - [Copy note ID](#copy-note-id)
+    - [Set URL](#set-url)
+    - [Open URL in browser](#Open-url-in-browser)
+    - [Touch note](#touch-note)
+    - [Move notes in list](#Move-notes-in-list)
+    - [Mapped commands](#mapped-commands)
   - [User options](#user-options)
 - [Installation](#installation)
 - [Uninstallation](#uninstallation)
-- [Support](#support)
+- [Feedback](#feedback)
 - [Changes](#changes)
 - [License](#license)
 
@@ -34,9 +40,9 @@ It provides [features](#features) to enhance working with notes and to-dos.
 
   - For example to display also in note toolbar
 
-### New Commands
+### Commands
 
-This plugin provides the new commands as described in the following chapters.
+This plugin provides the commands as described in the following chapters.
 
 - Column `Additional UI Locations` describes where the command can additionally be added to the UI
   - Whether the command is displayed or not can be set in the [user options](#user-options)
@@ -101,7 +107,7 @@ Change the position of a note in the current note list if 'Custom order' sort is
 
 > **NOTE** - Sorting in `All notes` is _not_ possible
 
-### Mapped commands
+#### Mapped commands
 
 The following internal commands are mapped to main menu entries. This allows to assign keyboard shortcuts to them.
 
@@ -118,12 +124,10 @@ This plugin adds the following user options which can be accessed via `Tools > O
 > **NOTE** - Changes to the user options are only applied after a restart of the app
 
 - Show [Open URL in browser](#open-url-in-browser) on note toolbar:\
-  _Select whether a button for the command shall be shown on the note toolbar (next to note title) or not_
+  _Select whether a button to open the note URL in the default browser shall be shown on the note toolbar or not._
 
 - Show [Toggle to-do state](#toggle-to-do-state) on note toolbar:\
-  _Select whether a button for the command shall be shown on the note toolbar (next to note title) or not_
-
-> TODO - Add user options here...
+  _Select whether a button to toggle the to-do state (open/closed) shall be shown on the note toolbar or not._
 
 ## Installation
 
@@ -133,7 +137,7 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 > TODO - Add steps to uninstall the plugin here...
 
-## Support
+## Feedback
 
 If you need help or found a bug, open an issue on [GitHub](https://github.com/benji300/joplin-note-ext/issues).
 
