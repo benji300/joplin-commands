@@ -1,11 +1,8 @@
 import joplin from "api";
 import JoplinViewsDialogs from "api/JoplinViewsDialogs";
-// import JoplinViewsDialogs from "api/JoplinViewsDialogs";
 import { MenuItemLocation, ToolbarButtonLocation } from 'api/types';
 
 const copy = require('../node_modules/copy-to-clipboard');
-// const open = require('open');
-// const { shell } = require('electron');
 
 // predefined keyboard shortcuts
 const accTextCheckbox = 'CmdOrCtrl+Shift+C';
@@ -26,12 +23,8 @@ joplin.plugins.register({
     const SETTINGS = joplin.settings;
     const WORKSPACE = joplin.workspace;
 
-    //#region INITIALIZE PLUGIN
-
     // prepare dialog/view/panel objects
     const dialogEditURL = await DIALOGS.create('dialogEditURL');
-
-    //#endregion
 
     //#region REGISTER USER OPTIONS
 
@@ -47,6 +40,7 @@ joplin.plugins.register({
       section: 'joplin-note-ext',
       public: true,
       label: 'Show "Open URL in browser" on note toolbar',
+      description: 'Select whether a button to open the note URL in the default browser shall be shown on the note toolbar or not.'
     });
 
     await SETTINGS.registerSetting('showToggleTodoStateToolbar', {
@@ -55,6 +49,7 @@ joplin.plugins.register({
       section: 'joplin-note-ext',
       public: true,
       label: 'Show "Toggle to-do state" on note toolbar',
+      description: 'Select whether a button to toggle the state (open/closed) of the to-do shall be shown on the note toolbar or not.'
     });
 
     //#endregion
@@ -137,8 +132,8 @@ joplin.plugins.register({
         await DIALOGS.setHtml(dialogEditURL, `
           <div class="joplin-note-ext-dialog">
             <form name="urlForm" style="display:grid;">
-              <label style="padding:5px 2px;">Set URL</label>
-              <input type="text" id="url" name="url" style="padding:2px;" value="${selectedNote.source_url}">
+              <label for="url" style="padding:5px 2px;">Set URL</label>
+              <input type="text" id="url" name="url" style="padding:2px;" placeholder="Enter URL..." value="${selectedNote.source_url}">
             </form>
           </div>
         `);
@@ -299,7 +294,7 @@ joplin.plugins.register({
 
         // TODO implement this command
         // TODO get order value from next note > set this order to: <next-order> + 1?
-        await DIALOGS.showMessageBox('Sorry, this command is currently not implemented...');
+        DIALOGS.showMessageBox('Sorry, this command is currently not implemented...');
       }
     });
 
