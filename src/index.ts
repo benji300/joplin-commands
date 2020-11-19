@@ -1,4 +1,4 @@
-import joplin from "api";
+import joplin from 'api';
 import JoplinViewsDialogs from "api/JoplinViewsDialogs";
 import { MenuItemLocation, ToolbarButtonLocation } from 'api/types';
 

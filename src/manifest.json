@@ -1,8 +1,10 @@
 {
 	"manifest_version": 1,
-	"name": "joplin-note-ext",
-	"description": "TODO.",
+	"id": "com.benji300.joplin.note-ext",
+	"app_min_version": "1.4",
 	"version": "0.1.0",
+	"name": "Note Extensions",
+	"description": "This plugin provides features to enhance working with notes and to-dos.",
 	"author": "Benjamin Seifert",
 	"homepage_url": "https://github.com/benji300/joplin-note-ext"
 }
