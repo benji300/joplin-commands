@@ -13,6 +13,11 @@ const accMoveUp = 'CmdOrCtrl+Alt+Up';
 const accMoveDown = 'CmdOrCtrl+Alt+Down';
 const accMoveToBottom = 'CmdOrCtrl+Shift+Alt+Down';
 
+// helper functions
+function escapeTitleText(text: string) {
+  return text.replace(/(\[|\])/g, '\\$1');
+}
+
 joplin.plugins.register({
   onStart: async function () {
     const COMMANDS = joplin.commands;
@@ -93,6 +98,7 @@ joplin.plugins.register({
       name: 'copyNoteId',
       label: 'Copy note ID',
       iconName: 'fas fa-copy',
+      enabledCondition: "someNotesSelected",
       execute: async () => {
         // get the selected note IDs and exit if none is currently selected
         const selectedNoteIds = await WORKSPACE.selectedNoteIds();
@@ -105,6 +111,33 @@ joplin.plugins.register({
           ids.push(note.id);
         }
         copy(ids.join('\n'));
+      }
+    });
+
+    // Command: copyMarkdownLink
+    // Desc: Copy the markdown links of all selected notes to the clipboard
+    await COMMANDS.register({
+      name: 'copyMarkdownLink',
+      label: 'Copy Markdown link',
+      iconName: 'fas fa-markdown',
+      enabledCondition: "someNotesSelected",
+      execute: async () => {
+        // get the selected note IDs and exit if none is currently selected
+        const selectedNoteIds = await WORKSPACE.selectedNoteIds();
+        if (!selectedNoteIds) return;
+
+        // copy each markdown link to clipboard
+        const links = [];
+        for (let i = 0; i < selectedNoteIds.length; i++) {
+          const note = await DATA.get(['notes', selectedNoteIds[i]], { fields: ['id', 'title'] });
+          const mdLink = [];
+          mdLink.push('[');
+          mdLink.push(escapeTitleText(note.title));
+          mdLink.push(']');
+          mdLink.push(`(:/${note.id})`);
+          links.push(mdLink.join(''));
+        }
+        copy(links.join('\n'));
       }
     });
 
@@ -321,6 +354,9 @@ joplin.plugins.register({
     const notePropertiesSubMenu = [
       {
         commandName: "copyNoteId",
+      },
+      {
+        commandName: "copyMarkdownLink",
       },
       {
         commandName: "editAlarm",

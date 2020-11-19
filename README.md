@@ -2,7 +2,7 @@
 
 _joplin-note-ext_ is a plugin to extend the UX and UI of [Joplin's](https://joplinapp.org/) desktop application.
 
-It provides [features](#features) to enhance working with notes and to-dos.
+It provides [commands](#commands) to enhance working with notes and to-dos.
 
 > :warning: **CAUTION** - Requires Joplin **v1.4.10** or newer.
 
@@ -12,6 +12,7 @@ It provides [features](#features) to enhance working with notes and to-dos.
   - [Commands](#commands)
     - [Toggle to-do state](#toggle-to-do-state)
     - [Copy note ID](#copy-note-id)
+    - [Copy Markdown link](#copy-markdown-link)
     - [Set URL](#set-url)
     - [Open URL in browser](#Open-url-in-browser)
     - [Touch note](#touch-note)
@@ -64,9 +65,21 @@ Set the status of the selected to-do to either completed or open.
 
 | Command Label | Command ID   | Default Key | Menu                     | Additional UI Locations |
 | ------------- | ------------ | ----------- | ------------------------ | ----------------------- |
-| Copy note ID  | `copyNoteId` | -           | `Note > Note properties` | Note context            |
+| Copy note ID  | `copyNoteId` | -           | `Note > Note properties` | -                       |
 
 Copy the IDs of all selected notes to the clipboard.
+
+#### Copy Markdown link
+
+| Command Label     | Command ID         | Default Key | Menu                     | Additional UI Locations |
+| ----------------- | ------------------ | ----------- | ------------------------ | ----------------------- |
+| Copy Markown link | `copyMarkdownLink` | -           | `Note > Note properties` | -                       |
+
+Basically a replica of the internal command. But with an entry in the main menu, so that a keyboard shortcut can be assigned to it.
+
+Also the command is available via the command palette now.
+
+> **NOTE** - Works also with multiple selected notes.
 
 #### Set URL
 
@@ -78,7 +91,7 @@ Opens dialog to directly edit the URL of the note.
 
 #### Open URL in browser
 
-> :construction: **NOTE** -  This command is urrently not implemented!
+> :construction: **NOTE** - This command is urrently not implemented!
 
 | Command Label       | Command ID         | Default Key | Menu                     | Additional UI Locations |
 | ------------------- | ------------------ | ----------- | ------------------------ | ----------------------- |
