@@ -171,9 +171,17 @@ If you need help or found a bug, open an issue on [GitHub](https://github.com/be
 
 ### Building the plugin
 
-If you want to build the plugin by your own simply run `npm run dist`.
+If you want to build the plugin by your own simply run:
 
-Or run `npm run release` to create also the archives.
+```
+npm run dist
+```
+
+Or run to create also the archives:
+
+```
+npm run release
+```
 
 ## Changes
 
