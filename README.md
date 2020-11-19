@@ -4,7 +4,7 @@ _joplin-note-ext_ is a plugin to extend the UX and UI of [Joplin's](https://jopl
 
 It provides [features](#features) to enhance working with notes and to-dos.
 
-> :warning: **CAUTION** - This theme requires at least version **v1.4.10**
+> :warning: **CAUTION** - Requires Joplin **v1.4.10** or newer.
 
 ## Table of contents
 
@@ -21,6 +21,7 @@ It provides [features](#features) to enhance working with notes and to-dos.
 - [Installation](#installation)
 - [Uninstallation](#uninstallation)
 - [Feedback](#feedback)
+- [Development](#development)
 - [Changes](#changes)
 - [License](#license)
 
@@ -77,7 +78,7 @@ Opens dialog to directly edit the URL of the note.
 
 #### Open URL in browser
 
-> :warning: This command is urrently not implemented!
+> :construction: **NOTE** -  This command is urrently not implemented!
 
 | Command Label       | Command ID         | Default Key | Menu                     | Additional UI Locations |
 | ------------------- | ------------------ | ----------- | ------------------------ | ----------------------- |
@@ -133,15 +134,33 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 ## Installation
 
-> TODO - Add steps to install the plugin here...
+- Open Joplin
+- Open the user profile directory via `Help > Open profile directory`
+- Download the latest ZIP-archive of this plugin from [here](https://github.com/benji300/joplin-note-ext/releases) to the `plugins` subfolder of the previously opened user profile directory
+  - Create the `plugins` folder before if not exist
+- Extract the archive into this folder
+- Restart Joplin to enable the plugin
 
 ## Uninstallation
 
-> TODO - Add steps to uninstall the plugin here...
+- Open Joplin
+- Open the user profile directory via `Help > Open profile directory`
+- Navigate into the `plugins` subfolder
+- Search for the folder named `joplin-note-ext-x.x.x` and delete it completely
+  - Where `x.x.x` is the installed version of the plugin
+- Restart Joplin
 
 ## Feedback
 
 If you need help or found a bug, open an issue on [GitHub](https://github.com/benji300/joplin-note-ext/issues).
+
+## Development
+
+### Building the plugin
+
+If you want to build the plugin by your own simply run `npm run dist`.
+
+Or run `npm run release` to create also the archives.
 
 ## Changes
 
