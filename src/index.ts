@@ -18,6 +18,15 @@ function escapeTitleText(text: string) {
   return text.replace(/(\[|\])/g, '\\$1');
 }
 
+function getIndexWithAttr(array: any, attr: any, value: any) {
+  for (var i = 0; i < array.length; i += 1) {
+    if (array[i][attr] === value) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 joplin.plugins.register({
   onStart: async function () {
     const COMMANDS = joplin.commands;
@@ -278,27 +287,53 @@ joplin.plugins.register({
         const sortOrder = await SETTINGS.globalValue("notes.sortOrder.field");
         if (sortOrder != 'order') return;
 
-        // search for all notes in the same folder and exit if empty
-        // TODO see here how to order_by: https://joplinapp.org/api/references/rest_api/#pagination
-        // TODO consider pagination also
-        // TODO what is "let" meant for?
-        // let test = JSON.stringify(result);
-        // await DIALOGS.showMessageBox(`Result: ${test}`);
-        let notes = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['title', 'parent_id', 'order'] });
-        if (!notes.length) return;
+        // get all notes from folder sorted by their 'order' value and exit if empty
+        const notes = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'DESC' });
+        // alternative solution via search query
+        // seems that order_by currently not works (https://discourse.joplinapp.org/t/api-pagination-and-sorting/12522)
+        // const notes = await joplin.data.get(['search'], { query: `notebook:Plugins`, type: "note", order_by: "updated_time", order_dir: "DESC", fields: ['id', 'title', 'parent_id', 'order', 'updated_time'] });
+        if (!notes.items.length) return;
 
-        // TODO implement this command
-        // TODO get order value from previous note > set this order to: <previous-order> - 1?
-        // Check out joplin drag&drop implementation
+        // get index of selected note in list and return if it is already the first
+        const index = getIndexWithAttr(notes.items, 'id', selectedNote.id);
+        if (index == 0) return;
 
-        // copy result to clipboard for test purposes
-        const ids = [];
-        ids.push('Copied notes:');
-        ids.push('title,parent_id,order');
-        for (let i = 0; i < notes.length; i++) {
-          ids.push(`${notes[i].title}, ${notes[i].parent_id}, ${notes[i].order}`);
+        // if its second - simply set 'order' to current timestamp value (as moveToTop command) and return
+        if (index == 1) {
+          await DATA.put(['notes', selectedNote.id], null, { order: Date.now() });
+          return;
         }
-        copy(ids.join('\n'));
+
+        // otherwise get the two previous notes and try to insert the selected note in between
+        // required because what if both have the same values?
+        const prevNote = await DATA.get(['notes', notes.items[index - 1].id], { fields: ['id', 'order'] });
+        const prevPrevNote = await DATA.get(['notes', notes.items[index - 2].id], { fields: ['id', 'order'] });
+
+        // TODO umbauen
+        // 1. alle notes mit gleicher Order aus der Liste holen (getAllWithAttr(notes, 'order', prevNote.order))
+        // 2. if (length > 1)
+        //    > allen notes eine neue order geben (order + (length-i)*1)
+        // 3. selectedNote bekommt order == prevNote.order + 0.25
+
+        if (prevPrevNote) {
+          // if prevPrevNote exists - then insert the selected note in between
+          const newOrder = prevPrevNote.order - prevNote.order;
+
+          if (newOrder > 0) {
+            // there is "space" to put it in between
+            await DATA.put(['notes', selectedNote.id], null, { order: prevNote.order + 0.25 });
+          } else {
+            // there is no space - prevNote needs also to be adapted
+            DIALOGS.showMessageBox(`check failed`);
+            // TODO was jetzt tun
+            // TODO es können ja noch viel mehr == 0 sein
+            // evtl. alle mit gleicher order value holen
+
+          }
+        }
+
+        // debug: write output to clipboardselectedNote
+        await copy(JSON.stringify(notes));
       }
     });
 
@@ -341,8 +376,23 @@ joplin.plugins.register({
         const sortOrder = await SETTINGS.globalValue("notes.sortOrder.field");
         if (sortOrder != 'order') return;
 
-        // TODO implement this command
-        await DIALOGS.showMessageBox('Sorry, this command is currently not implemented...');
+        // get all notes from folder sorted by their 'order' value and exit if empty
+        const notes = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'DESC' });
+        if (!notes.items.length) return;
+
+        // get index of selected note in list and return if it is already the last
+        const index = getIndexWithAttr(notes.items, 'id', selectedNote.id);
+        if (index == notes.items.length - 1) return;
+
+        // TODO wenn letzte order > 0.25 => dann einfach halbieren?
+        // wenn letze order == 0 => TODO was jetzt?
+        // siehe moveUp - alle mit gleicher order holen , patchen , setzen
+
+        // TODO testen
+        // doch lieber das element nehmen und order-0.25 rechnen?
+        // sonst haben alle iwan 0 als order?
+        // set 'order' to zero
+        await DATA.put(['notes', selectedNote.id], null, { order: 0 });
       }
     });
 
@@ -353,13 +403,13 @@ joplin.plugins.register({
     // prepare "Note properties" sub-menu
     const notePropertiesSubMenu = [
       {
-        commandName: "copyNoteId",
+        commandName: "copyNoteId"
       },
       {
-        commandName: "copyMarkdownLink",
+        commandName: "copyMarkdownLink"
       },
       {
-        commandName: "editAlarm",
+        commandName: "editAlarm"
       },
       {
         commandName: "editURL"
@@ -368,7 +418,7 @@ joplin.plugins.register({
       //   commandName: "openURLInBrowser"
       // },
       {
-        commandName: "touchNote",
+        commandName: "touchNote"
       }
     ]
 
