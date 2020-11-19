@@ -136,7 +136,7 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 - Open Joplin
 - Open the user profile directory via `Help > Open profile directory`
-- Download the latest ZIP-archive of this plugin from [here](https://github.com/benji300/joplin-note-ext/releases) to the `plugins` subfolder of the previously opened user profile directory
+- Download the latest [released](https://github.com/benji300/joplin-note-ext/releases) ZIP-archive to the `plugins` subfolder of the previously opened user profile directory
   - Create the `plugins` folder before if not exist
 - Extract the archive into this folder
 - Restart Joplin to enable the plugin
