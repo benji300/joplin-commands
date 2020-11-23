@@ -40,8 +40,8 @@ joplin.plugins.register({
 
     //#region REGISTER USER OPTIONS
 
-    await SETTINGS.registerSection('joplin-note-ext', {
-      label: 'Note Extensions',
+    await SETTINGS.registerSection('com.benji300.joplin.commands', {
+      label: 'Command Extensions',
       iconName: 'fas fa-file-medical', // TODO icon: tachometer-alt?
       description: 'Note: Changes are only applied after a restart.'
     });
@@ -49,7 +49,7 @@ joplin.plugins.register({
     // await SETTINGS.registerSetting('showOpenURLInBrowserToolbar', {
     //   value: false,
     //   type: 3,
-    //   section: 'joplin-note-ext',
+    //   section: 'com.benji300.joplin.commands',
     //   public: true,
     //   label: 'Show "Open URL in browser" on note toolbar',
     //   description: 'Select whether a button to open the note URL in the default browser shall be shown on the note toolbar or not.'
@@ -58,7 +58,7 @@ joplin.plugins.register({
     await SETTINGS.registerSetting('showToggleTodoStateToolbar', {
       value: false,
       type: 3,
-      section: 'joplin-note-ext',
+      section: 'com.benji300.joplin.commands',
       public: true,
       label: 'Show "Toggle to-do state" on note toolbar',
       description: 'Select whether a button to toggle the state (open/closed) of the to-do shall be shown on the note toolbar or not.'
@@ -166,7 +166,7 @@ joplin.plugins.register({
         // API: dialog box is fixed to width which cannot be overwritten by plugin itself
         //      Adding "width: fit-content;" to parent container div#joplin-plugin-content fixes the problem
         await DIALOGS.setHtml(dialogEditURL, `
-          <div class="joplin-note-ext-dialog">
+          <div class="com.benji300.joplin.commands-dialog">
             <form name="urlForm" style="display:grid;">
               <label for="url" style="padding:5px 2px;">Set URL</label>
               <input type="text" id="url" name="url" style="padding:2px;" placeholder="Enter URL..." value="${selectedNote.source_url}">
@@ -309,11 +309,13 @@ joplin.plugins.register({
         const prevNote = await DATA.get(['notes', notes.items[index - 1].id], { fields: ['id', 'order'] });
         const prevPrevNote = await DATA.get(['notes', notes.items[index - 2].id], { fields: ['id', 'order'] });
 
+        // TODO vorher schauen wie es in App implementiert ist (iwas mit Drop...)
         // TODO umbauen
         // 1. alle notes mit gleicher Order aus der Liste holen (getAllWithAttr(notes, 'order', prevNote.order))
         // 2. if (length > 1)
         //    > allen notes eine neue order geben (order + (length-i)*1)
         // 3. selectedNote bekommt order == prevNote.order + 0.25
+
 
         if (prevPrevNote) {
           // if prevPrevNote exists - then insert the selected note in between

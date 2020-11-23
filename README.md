@@ -1,15 +1,15 @@
-# Joplin Note Extensions
+# Joplin Command Extension
 
-_joplin-note-ext_ is a plugin to extend the UX and UI of [Joplin's](https://joplinapp.org/) desktop application.
+This is a plugin to extend the UX of [Joplin's](https://joplinapp.org/) desktop application.
 
-It provides [commands](#commands) to enhance working with notes and to-dos.
+It provides [new commands](#new-commands) or maps [internal commands](#mapped-commands) to enhance working with notes and to-dos.
 
 > :warning: **CAUTION** - Requires Joplin **v1.4.10** or newer
 
 ## Table of contents
 
 - [Features](#features)
-  - [Commands](#commands)
+  - [New commands](#new-commands)
     - [Toggle to-do state](#toggle-to-do-state)
     - [Copy note ID](#copy-note-id)
     - [Copy Markdown link](#copy-markdown-link)
@@ -17,7 +17,7 @@ It provides [commands](#commands) to enhance working with notes and to-dos.
     - [Open URL in browser](#Open-url-in-browser)
     - [Touch note](#touch-note)
     - [Move notes in list](#Move-notes-in-list)
-    - [Mapped commands](#mapped-commands)
+  - [Mapped commands](#mapped-commands)
   - [User options](#user-options)
 - [Installation](#installation)
 - [Uninstallation](#uninstallation)
@@ -28,21 +28,16 @@ It provides [commands](#commands) to enhance working with notes and to-dos.
 
 ## Features
 
-- Several [new commands](#new-commands) to ...
-
+- Add new [commands](#new-commands) to ...
   - Update note properties (e.g. [Toggle to-do state](#toggle-to-do-state))
   - [Move notes](#move-notes) in current note list
-  - and more...
-
+  - and many more...
 - Map Joplin [internal commands](#mapped-commands) to the main menu
-
   - Allows to assign keyboard shortcuts to them
-
-- Several [user options](#user-options) to specify additional display locations for commands
-
+- Add [user options](#user-options) to specify additional display locations for commands
   - For example to display also in note toolbar
 
-### Commands
+### New commands
 
 This plugin provides the commands as described in the following chapters.
 
@@ -123,7 +118,7 @@ Change the position of a note in the current note list if 'Custom order' sort is
 
 > **NOTE** - Sorting in `All notes` is _not_ possible
 
-#### Mapped commands
+### Mapped commands
 
 The following internal commands are mapped to main menu entries. This allows to assign keyboard shortcuts to them.
 
@@ -147,25 +142,25 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 ## Installation
 
+- Download the latest released JPL package (`com.benji300.joplin.commands.jpl`) from [here](https://github.com/benji300/joplin-commands/releases)
 - Open Joplin
-- Open the user profile directory via `Help > Open profile directory`
-- Download the latest [released](https://github.com/benji300/joplin-note-ext/releases) ZIP-archive to the `plugins` subfolder of the previously opened user profile directory
-  - Create the `plugins` folder before if not exist
-- Extract the archive into this folder
+- Navigate to `Tools > Options > Plugins`
+- Click `Install plugin` and select the previously downloaded `jpl` file
+- Confirm selection
 - Restart Joplin to enable the plugin
 
 ## Uninstallation
 
 - Open Joplin
-- Open the user profile directory via `Help > Open profile directory`
-- Navigate into the `plugins` subfolder
-- Search for the folder named `joplin-note-ext-x.x.x` and delete it completely
-  - Where `x.x.x` is the installed version of the plugin
+- Navigate to `Tools > Options > Plugins`
+- Search for the `Command Extension` plugin
+- Click `Delete` to remove the plugin from the user profile directory
+  - Alternatively you can also disable the plugin by clicking on the toggle button
 - Restart Joplin
 
 ## Feedback
 
-If you need help or found a bug, open an issue on [GitHub](https://github.com/benji300/joplin-note-ext/issues).
+If you need help or found a bug, open an issue on [GitHub](https://github.com/benji300/joplin-commands/issues).
 
 ## Development
 

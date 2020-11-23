@@ -1,20 +1,21 @@
 {
-  "name": "joplin-note-ext",
+  "name": "com.benji300.joplin.commands",
   "version": "0.1.0",
   "description": "This plugin provides commands to enhance working with notes and to-dos.",
   "keywords": [
     "joplin",
-    "plugin"
+    "plugin",
+    "commands"
   ],
   "author": "Benji300",
   "license": "MIT",
-  "homepage": "https://github.com/benji300/joplin-note-ext",
+  "homepage": "https://github.com/benji300/joplin-commands",
   "bugs": {
-    "url": "https://github.com/benji300/joplin-note-ext/issues"
+    "url": "https://github.com/benji300/joplin-commands/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/benji300/joplin-note-ext.git"
+    "url": "git+https://github.com/benji300/joplin-commands.git"
   },
   "scripts": {
     "dist": "webpack",
