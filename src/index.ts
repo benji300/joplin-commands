@@ -18,7 +18,17 @@ function escapeTitleText(text: string) {
   return text.replace(/(\[|\])/g, '\\$1');
 }
 
-function getIndexWithAttr(array: any, attr: any, value: any) {
+function getAllWithAttr(array: any, attr: any, value: any) {
+  const notes: any = [];
+  for (var i = 0; i < array.length; i += 1) {
+    if (array[i][attr] === value) {
+      notes.push(array[i]);
+    }
+  }
+  return notes;
+}
+
+function getIndexWithAttr(array: any, attr: any, value: any): any {
   for (var i = 0; i < array.length; i += 1) {
     if (array[i][attr] === value) {
       return i;
@@ -27,6 +37,7 @@ function getIndexWithAttr(array: any, attr: any, value: any) {
   return -1;
 }
 
+// register plugin
 joplin.plugins.register({
   onStart: async function () {
     const COMMANDS = joplin.commands;
@@ -41,8 +52,8 @@ joplin.plugins.register({
     //#region REGISTER USER OPTIONS
 
     await SETTINGS.registerSection('com.benji300.joplin.commands', {
-      label: 'Command Extensions',
-      iconName: 'fas fa-file-medical', // TODO icon: tachometer-alt?
+      label: 'Command Extension',
+      iconName: 'fas fa-terminal',
       description: 'Note: Changes are only applied after a restart.'
     });
 
@@ -61,7 +72,7 @@ joplin.plugins.register({
       section: 'com.benji300.joplin.commands',
       public: true,
       label: 'Show "Toggle to-do state" on note toolbar',
-      description: 'Select whether a button to toggle the state (open/closed) of the to-do shall be shown on the note toolbar or not.'
+      description: 'Select whether a button to toggle the state (open/completed) of the to-do shall be shown on the note toolbar or not.'
     });
 
     //#endregion
@@ -159,28 +170,27 @@ joplin.plugins.register({
       enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
         // get the selected note and exit if none is currently selected
-        const selectedNote = await WORKSPACE.selectedNote();
+        const selectedNote: any = await WORKSPACE.selectedNote();
         if (!selectedNote) return;
 
         // prepare and open dialog
         // API: dialog box is fixed to width which cannot be overwritten by plugin itself
         //      Adding "width: fit-content;" to parent container div#joplin-plugin-content fixes the problem
         await DIALOGS.setHtml(dialogEditURL, `
-          <div class="com.benji300.joplin.commands-dialog">
+          <div class="joplin-commands-container">
             <form name="urlForm" style="display:grid;">
               <label for="url" style="padding:5px 2px;">Set URL</label>
               <input type="text" id="url" name="url" style="padding:2px;" placeholder="Enter URL..." value="${selectedNote.source_url}">
             </form>
           </div>
         `);
-        const result = await DIALOGS.open(dialogEditURL);
+        const result: any = await DIALOGS.open(dialogEditURL);
 
         // get return and new URL value
         if (result.id == 'ok') {
           if (result.formData != null) {
-            const newUrl = result.formData.urlForm.url as string;
-            const boxResult = await DIALOGS.showMessageBox(`Set URL to: ${newUrl}`);
-            if (boxResult == 0) {
+            const newUrl: string = result.formData.urlForm.url;
+            if (await DIALOGS.showMessageBox(`Set URL to: ${newUrl}`)) {
               await DATA.put(['notes', selectedNote.id], null, { source_url: newUrl });
             }
           }
@@ -249,13 +259,11 @@ joplin.plugins.register({
     });
 
     // Command: moveToTop
-    // Desc: Moves the current selected note to the top of the list
+    // Desc: Moves the selected note to the top of the list
     await COMMANDS.register({
       name: 'moveToTop',
       label: 'Move to top',
       iconName: 'fas fa-angle-double-up',
-      // TODO check if disabling is possible in case of other sort type
-      // TODO enabledCondtion == !firstInList?
       enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
         // get the selected note and exit if none is currently selected
@@ -265,6 +273,10 @@ joplin.plugins.register({
         // get the note sort order and exit if not custom order
         const sortOrder = await SETTINGS.globalValue("notes.sortOrder.field");
         if (sortOrder != 'order') return;
+
+        // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
+        const uncompletedTodosOnTop: any = await SETTINGS.globalValue("uncompletedTodosOnTop");
+        if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
 
         // set 'order' to current timestamp value
         await DATA.put(['notes', selectedNote.id], null, { order: Date.now() });
@@ -272,7 +284,7 @@ joplin.plugins.register({
     });
 
     // Command: moveUp
-    // Desc: todo
+    // Desc: Moves the selected note one position up
     await COMMANDS.register({
       name: 'moveUp',
       label: 'Move up',
@@ -280,67 +292,60 @@ joplin.plugins.register({
       enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
         // get the selected note and exit if none is currently selected
-        const selectedNote = await WORKSPACE.selectedNote();
+        const selectedNote: any = await WORKSPACE.selectedNote();
         if (!selectedNote) return;
 
         // get the note sort order and exit if not custom order
-        const sortOrder = await SETTINGS.globalValue("notes.sortOrder.field");
+        const sortOrder: any = await SETTINGS.globalValue("notes.sortOrder.field");
         if (sortOrder != 'order') return;
 
+        // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
+        const uncompletedTodosOnTop: any = await SETTINGS.globalValue("uncompletedTodosOnTop");
+        if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
+
         // get all notes from folder sorted by their 'order' value and exit if empty
-        const notes = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'DESC' });
-        // alternative solution via search query
-        // seems that order_by currently not works (https://discourse.joplinapp.org/t/api-pagination-and-sorting/12522)
-        // const notes = await joplin.data.get(['search'], { query: `notebook:Plugins`, type: "note", order_by: "updated_time", order_dir: "DESC", fields: ['id', 'title', 'parent_id', 'order', 'updated_time'] });
+        var notes: any = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'DESC' });
         if (!notes.items.length) return;
 
-        // get index of selected note in list and return if it is already the first
-        const index = getIndexWithAttr(notes.items, 'id', selectedNote.id);
+        // get index of selected note in list and exit if it is already the first
+        const index: number = getIndexWithAttr(notes.items, 'id', selectedNote.id);
         if (index == 0) return;
 
-        // if its second - simply set 'order' to current timestamp value (as moveToTop command) and return
+        // if its second - simply set 'order' to current timestamp value (as moveToTop command) and exit
         if (index == 1) {
-          await DATA.put(['notes', selectedNote.id], null, { order: Date.now() });
+          COMMANDS.execute('moveToTop');
           return;
         }
 
-        // otherwise get the two previous notes and try to insert the selected note in between
-        // required because what if both have the same values?
-        const prevNote = await DATA.get(['notes', notes.items[index - 1].id], { fields: ['id', 'order'] });
-        const prevPrevNote = await DATA.get(['notes', notes.items[index - 2].id], { fields: ['id', 'order'] });
-
-        // TODO vorher schauen wie es in App implementiert ist (iwas mit Drop...)
-        // TODO umbauen
-        // 1. alle notes mit gleicher Order aus der Liste holen (getAllWithAttr(notes, 'order', prevNote.order))
-        // 2. if (length > 1)
-        //    > allen notes eine neue order geben (order + (length-i)*1)
-        // 3. selectedNote bekommt order == prevNote.order + 0.25
-
-
-        if (prevPrevNote) {
-          // if prevPrevNote exists - then insert the selected note in between
-          const newOrder = prevPrevNote.order - prevNote.order;
-
-          if (newOrder > 0) {
-            // there is "space" to put it in between
-            await DATA.put(['notes', selectedNote.id], null, { order: prevNote.order + 0.25 });
-          } else {
-            // there is no space - prevNote needs also to be adapted
-            DIALOGS.showMessageBox(`check failed`);
-            // TODO was jetzt tun
-            // TODO es können ja noch viel mehr == 0 sein
-            // evtl. alle mit gleicher order value holen
-
+        // get all notes with same order value as previous note
+        const previousNote: any = await DATA.get(['notes', notes.items[index - 1].id], { fields: ['id', 'order'] });
+        var previousOrder: number = previousNote.order;
+        const notesWithSameOrder: any = getAllWithAttr(notes.items, 'order', previousOrder);
+        if (notesWithSameOrder.length > 1) {
+          // multiple notes found - special handling required
+          // if selected note order will just be increased, it will "jump" up several positions
+          // so each previous note with same order value needs to be adapted
+          // TODO: Check for a better solution as this will change other notes data (which might lead to sync problems)
+          previousOrder += notesWithSameOrder.length * 1000;
+          for (const note of notesWithSameOrder) {
+            await DATA.put(['notes', note.id], null, { order: previousOrder });
+            previousOrder -= 1000;
           }
+          await DATA.put(['notes', selectedNote.id], null, { order: previousOrder + 10 });
+        } else {
+          // put selected note in between previous in pre-previous note
+          const prevprevNote: any = await DATA.get(['notes', notes.items[index - 2].id], { fields: ['id', 'order'] });
+          const newOrder: number = ((prevprevNote.order - previousNote.order) / 2);
+          await DATA.put(['notes', selectedNote.id], null, { order: previousNote.order + newOrder });
         }
 
-        // debug: write output to clipboardselectedNote
-        await copy(JSON.stringify(notes));
+        // debug: write output to clipboard
+        await copy(JSON.stringify(await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'DESC' })));
       }
     });
 
     // Command: moveDown
-    // Desc: todo
+    // Desc: Moves the selected note one position down
     await COMMANDS.register({
       name: 'moveDown',
       label: 'Move down',
@@ -355,14 +360,54 @@ joplin.plugins.register({
         const sortOrder = await SETTINGS.globalValue("notes.sortOrder.field");
         if (sortOrder != 'order') return;
 
-        // TODO implement this command
-        // TODO get order value from next note > set this order to: <next-order> + 1?
-        DIALOGS.showMessageBox('Sorry, this command is currently not implemented...');
+        // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
+        const uncompletedTodosOnTop: any = await SETTINGS.globalValue("uncompletedTodosOnTop");
+        if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
+
+        // get all notes from folder sorted by their 'order' value and exit if empty
+        var notes: any = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' });
+        if (!notes.items.length) return;
+
+        // get index of selected note in list and exit if it is already the last
+        const index: number = getIndexWithAttr(notes.items, 'id', selectedNote.id);
+        if (index == 0) return;
+
+        // if its second last - simply trigger moveToBottom command and exit
+        if (index == 1) {
+          alert("moveToBottom");
+          COMMANDS.execute('moveToBottom');
+          return;
+        }
+
+        // get all notes with same order value as subsequent note
+        const subsequentNote: any = await DATA.get(['notes', notes.items[index - 1].id], { fields: ['id', 'order'] });
+        var subsequentOrder: number = subsequentNote.order;
+        const notesWithSameOrder: any = getAllWithAttr(notes.items, 'order', subsequentOrder);
+        if (notesWithSameOrder.length > 1) {
+          // multiple notes found - special handling required
+          // if selected note order will just be decreased, it will "jump" up several positions
+          // so each subsequent note with same order value needs to be adapted
+          // TODO: Check for a better solution as this will change other notes data (which might lead to sync problems)
+          subsequentOrder -= notesWithSameOrder.length * 1000;
+          for (const note of notesWithSameOrder) {
+            await DATA.put(['notes', note.id], null, { order: subsequentOrder });
+            subsequentOrder += 1000;
+          }
+          await DATA.put(['notes', selectedNote.id], null, { order: subsequentOrder - 10 });
+        } else {
+          // put selected note in between subsequent in sub-subsequent note
+          const subsubsequentNote: any = await DATA.get(['notes', notes.items[index - 2].id], { fields: ['id', 'order'] });
+          const newOrder: number = ((subsequentNote.order - subsubsequentNote.order) / 2);
+          await DATA.put(['notes', selectedNote.id], null, { order: subsequentNote.order - newOrder });
+        }
+
+        // debug: write output to clipboard
+        await copy(JSON.stringify(await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' })));
       }
     });
 
     // Command: moveToBottom
-    // Desc: Moves the current selected note to the bottom of the list
+    // Desc: Moves the selected note to the bottom of the list
     await COMMANDS.register({
       name: 'moveToBottom',
       label: 'Move to bottom',
@@ -378,23 +423,31 @@ joplin.plugins.register({
         const sortOrder = await SETTINGS.globalValue("notes.sortOrder.field");
         if (sortOrder != 'order') return;
 
+        // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
+        const uncompletedTodosOnTop: any = await SETTINGS.globalValue("uncompletedTodosOnTop");
+        if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
+
         // get all notes from folder sorted by their 'order' value and exit if empty
-        const notes = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'DESC' });
+        const notes = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' });
         if (!notes.items.length) return;
 
-        // get index of selected note in list and return if it is already the last
+        // get index of selected note in list and exit if it is already the last
         const index = getIndexWithAttr(notes.items, 'id', selectedNote.id);
-        if (index == notes.items.length - 1) return;
+        if (index == 0) return;
 
-        // TODO wenn letzte order > 0.25 => dann einfach halbieren?
-        // wenn letze order == 0 => TODO was jetzt?
-        // siehe moveUp - alle mit gleicher order holen , patchen , setzen
+        const lastNote: any = await DATA.get(['notes', notes.items[0].id], { fields: ['id', 'order'] });
+        var lastOrder: number = lastNote.order;
+        if (lastOrder == 0) {
+          alert("TODO: last order is zero");
+          // wenn letze order == 0 => TODO was jetzt > letze order nehmen wert immer halbieren
 
-        // TODO testen
-        // doch lieber das element nehmen und order-0.25 rechnen?
-        // sonst haben alle iwan 0 als order?
-        // set 'order' to zero
-        await DATA.put(['notes', selectedNote.id], null, { order: 0 });
+        } else {
+          // previous order value is greater than zero - so halve the value
+          await DATA.put(['notes', selectedNote.id], null, { order: (lastOrder / 2) });
+        }
+
+        // debug: write output to clipboard
+        await copy(JSON.stringify(await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' })));
       }
     });
 

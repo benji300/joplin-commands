@@ -4,7 +4,7 @@ This is a plugin to extend the UX of [Joplin's](https://joplinapp.org/) desktop 
 
 It provides [new commands](#new-commands) or maps [internal commands](#mapped-commands) to enhance working with notes and to-dos.
 
-> :warning: **CAUTION** - Requires Joplin **v1.4.10** or newer
+> :warning: **CAUTION** - Requires Joplin **v1.4.11** or newer
 
 ## Table of contents
 
