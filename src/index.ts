@@ -47,11 +47,11 @@ joplin.plugins.register({
     const WORKSPACE = joplin.workspace;
 
     // prepare dialog/view/panel objects
-    const dialogEditURL = await DIALOGS.create('dialogEditURL');
+    const dialogEditURL = await DIALOGS.create('com.benji300.joplin.commands.dialog');
 
     //#region REGISTER USER OPTIONS
 
-    await SETTINGS.registerSection('com.benji300.joplin.commands', {
+    await SETTINGS.registerSection('com.benji300.joplin.commands.settings', {
       label: 'Command Collection',
       iconName: 'fas fa-terminal',
       description: 'Note: Changes are only applied after a restart.'
@@ -60,7 +60,7 @@ joplin.plugins.register({
     // await SETTINGS.registerSetting('showOpenURLInBrowserToolbar', {
     //   value: false,
     //   type: 3,
-    //   section: 'com.benji300.joplin.commands',
+    //   section: 'com.benji300.joplin.commands.settings',
     //   public: true,
     //   label: 'Show "Open URL in browser" on note toolbar',
     //   description: 'Select whether a button to open the note URL in the default browser shall be shown on the note toolbar or not.'
@@ -69,7 +69,7 @@ joplin.plugins.register({
     await SETTINGS.registerSetting('showToggleTodoStateToolbar', {
       value: false,
       type: 3,
-      section: 'com.benji300.joplin.commands',
+      section: 'com.benji300.joplin.commands.settings',
       public: true,
       label: 'Show "Toggle to-do state" on note toolbar',
       description: 'Select whether a button to toggle the state (open/completed) of the to-do shall be shown on the note toolbar or not.'
@@ -174,8 +174,6 @@ joplin.plugins.register({
         if (!selectedNote) return;
 
         // prepare and open dialog
-        // API: dialog box is fixed to width which cannot be overwritten by plugin itself
-        //      Adding "width: fit-content;" to parent container div#joplin-plugin-content fixes the problem
         await DIALOGS.setHtml(dialogEditURL, `
           <div class="joplin-commands-container">
             <form name="urlForm" style="display:grid;">
@@ -187,10 +185,11 @@ joplin.plugins.register({
         const result: any = await DIALOGS.open(dialogEditURL);
 
         // get return and new URL value
-        if (result.id == 'ok') {
+        if (result.id == "ok") {
           if (result.formData != null) {
             const newUrl: string = result.formData.urlForm.url;
-            if (await DIALOGS.showMessageBox(`Set URL to: ${newUrl}`)) {
+            const dialogRes: number = await DIALOGS.showMessageBox(`Set URL to: ${newUrl}`);
+            if (dialogRes == 0) {
               await DATA.put(['notes', selectedNote.id], null, { source_url: newUrl });
             }
           }
