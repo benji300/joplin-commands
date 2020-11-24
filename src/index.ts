@@ -8,10 +8,10 @@ const copy = require('../node_modules/copy-to-clipboard');
 const accTextCheckbox = 'CmdOrCtrl+Shift+C';
 const accToggleTodoState = 'CmdOrCtrl+Shift+Space';
 const accMoveToFolder = 'CmdOrCtrl+Shift+M';
-const accMoveToTop = 'CmdOrCtrl+Shift+Alt+Up';
-const accMoveUp = 'CmdOrCtrl+Alt+Up';
-const accMoveDown = 'CmdOrCtrl+Alt+Down';
-const accMoveToBottom = 'CmdOrCtrl+Shift+Alt+Down';
+const accMoveToTop = 'CmdOrCtrl+Alt+num8';
+const accMoveUp = 'CmdOrCtrl+num8';
+const accMoveDown = 'CmdOrCtrl+num2';
+const accMoveToBottom = 'CmdOrCtrl+Alt+num2';
 
 // helper functions
 function escapeTitleText(text: string) {

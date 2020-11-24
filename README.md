@@ -107,16 +107,18 @@ Useful to move a note to the top of a list when the 'Updated date' sort is activ
 
 #### Move notes in list
 
-| Command Label  | Command ID     | Default Key                | Menu                  | Additional UI Locations |
-| -------------- | -------------- | -------------------------- | --------------------- | ----------------------- |
-| Move to top    | `moveToTop`    | `CmdOrCtrl+Shift+Alt+Up`   | `Note > Move in list` | Note context            |
-| Move up        | `moveUp`       | `CmdOrCtrl+Alt+Up`         | `Note > Move in list` | Note context            |
-| Move down      | `moveDown`     | `CmdOrCtrl+Alt+Down`       | `Note > Move in list` | Note context            |
-| Move to bottom | `moveToBottom` | `CmdOrCtrl+Shift+Alt+Down` | `Note > Move in list` | Note context            |
+| Command Label  | Command ID     | Default Key          | Menu                  | Additional UI Locations |
+| -------------- | -------------- | -------------------- | --------------------- | ----------------------- |
+| Move to top    | `moveToTop`    | `CmdOrCtrl+num8`     | `Note > Move in list` | Note context            |
+| Move up        | `moveUp`       | `CmdOrCtrl+Alt+num8` | `Note > Move in list` | Note context            |
+| Move down      | `moveDown`     | `CmdOrCtrl+num2`     | `Note > Move in list` | Note context            |
+| Move to bottom | `moveToBottom` | `CmdOrCtrl+Alt+num2` | `Note > Move in list` | Note context            |
 
-Change the position of a note in the current note list if 'Custom order' sort is active.
+Change the position of a note in the current note list (notebook), if `Sort notes by` is set to `Custom order`.
 
 > **NOTE** - Sorting in `All notes` is _not_ possible
+
+> **NOTE** - The default keys using num keys in order to trigger the commands also when focus is set to note list
 
 ### Mapped commands
 
