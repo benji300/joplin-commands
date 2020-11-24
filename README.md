@@ -1,8 +1,8 @@
-# Joplin Command Extension
+# Joplin Command Collection
 
-This is a plugin to extend the UX of [Joplin's](https://joplinapp.org/) desktop application.
+Joplin Command Collection is a plugin to extend the UX of [Joplin's](https://joplinapp.org/) desktop application.
 
-It provides [new commands](#new-commands) or maps [internal commands](#mapped-commands) to enhance working with notes and to-dos.
+It provides [new commands](#new-commands) or maps [internal commands](#mapped-commands) to the main menu to enhance working with notes and to-dos.
 
 > :warning: **CAUTION** - Requires Joplin **v1.4.11** or newer
 
@@ -153,7 +153,7 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 - Open Joplin
 - Navigate to `Tools > Options > Plugins`
-- Search for the `Command Extension` plugin
+- Search for the `Command Collection` plugin
 - Click `Delete` to remove the plugin from the user profile directory
   - Alternatively you can also disable the plugin by clicking on the toggle button
 - Restart Joplin

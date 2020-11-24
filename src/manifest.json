@@ -3,8 +3,8 @@
 	"id": "com.benji300.joplin.commands",
 	"app_min_version": "1.4",
 	"version": "0.1.0",
-	"name": "Command Extension",
-	"description": "This plugin provides commands to enhance working with notes and to-dos.",
+	"name": "Command Collection",
+	"description": "Collection of commands to enhance working with notes and to-dos.",
 	"author": "Benji300",
 	"homepage_url": "https://github.com/benji300/joplin-commands"
 }

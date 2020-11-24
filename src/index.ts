@@ -52,7 +52,7 @@ joplin.plugins.register({
     //#region REGISTER USER OPTIONS
 
     await SETTINGS.registerSection('com.benji300.joplin.commands', {
-      label: 'Command Extension',
+      label: 'Command Collection',
       iconName: 'fas fa-terminal',
       description: 'Note: Changes are only applied after a restart.'
     });
