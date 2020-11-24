@@ -6,6 +6,8 @@ It provides [new commands](#new-commands) or maps [internal commands](#mapped-co
 
 > :warning: **CAUTION** - Requires Joplin **v1.4.11** or newer
 
+> :warning: **CAUTION** - This is a development version at a very early stage. Please make a backup copy of the user data (especially from the database) before using this plugin. I don't think that the plugin causes any damage to the database, but unfortunately I can't rule it out completely. I neither have the time nor the possibilities to test all possible use cases.
+
 ## Table of contents
 
 - [Features](#features)
