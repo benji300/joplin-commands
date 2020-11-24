@@ -326,11 +326,11 @@ joplin.plugins.register({
       enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
         // get the selected note and exit if none is currently selected
-        const selectedNote = await WORKSPACE.selectedNote();
+        const selectedNote: any = await WORKSPACE.selectedNote();
         if (!selectedNote) return;
 
         // get the note sort order and exit if not custom order
-        const sortOrder = await SETTINGS.globalValue("notes.sortOrder.field");
+        const sortOrder: string = await SETTINGS.globalValue("notes.sortOrder.field");
         if (sortOrder != 'order') return;
 
         // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
@@ -355,7 +355,7 @@ joplin.plugins.register({
         if (!selectedNote) return;
 
         // get the note sort order and exit if not custom order
-        const sortOrder: any = await SETTINGS.globalValue("notes.sortOrder.field");
+        const sortOrder: string = await SETTINGS.globalValue("notes.sortOrder.field");
         if (sortOrder != 'order') return;
 
         // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
@@ -370,7 +370,7 @@ joplin.plugins.register({
         const index: number = getIndexWithAttr(notes.items, 'id', selectedNote.id);
         if (index == 0) return;
 
-        // if its second - simply set 'order' to current timestamp value (as moveToTop command) and exit
+        // if it is second - simply trigger moveToTop command and exit
         if (index == 1) {
           COMMANDS.execute('moveToTop');
           return;
@@ -412,11 +412,11 @@ joplin.plugins.register({
       enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
         // get the selected note and exit if none is currently selected
-        const selectedNote = await WORKSPACE.selectedNote();
+        const selectedNote: any = await WORKSPACE.selectedNote();
         if (!selectedNote) return;
 
         // get the note sort order and exit if not custom order
-        const sortOrder = await SETTINGS.globalValue("notes.sortOrder.field");
+        const sortOrder: string = await SETTINGS.globalValue("notes.sortOrder.field");
         if (sortOrder != 'order') return;
 
         // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
@@ -431,9 +431,8 @@ joplin.plugins.register({
         const index: number = getIndexWithAttr(notes.items, 'id', selectedNote.id);
         if (index == 0) return;
 
-        // if its second last - simply trigger moveToBottom command and exit
+        // if it is second - simply trigger moveToBottom command and exit
         if (index == 1) {
-          alert("moveToBottom");
           COMMANDS.execute('moveToBottom');
           return;
         }
@@ -475,11 +474,11 @@ joplin.plugins.register({
       enabledCondition: "oneNoteSelected && !inConflictFolder",
       execute: async () => {
         // get the selected note and exit if none is currently selected
-        const selectedNote = await WORKSPACE.selectedNote();
+        const selectedNote: any = await WORKSPACE.selectedNote();
         if (!selectedNote) return;
 
         // get the note sort order and exit if not custom order
-        const sortOrder = await SETTINGS.globalValue("notes.sortOrder.field");
+        const sortOrder: string = await SETTINGS.globalValue("notes.sortOrder.field");
         if (sortOrder != 'order') return;
 
         // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
@@ -487,7 +486,7 @@ joplin.plugins.register({
         if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
 
         // get all notes from folder sorted by their 'order' value and exit if empty
-        const notes = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' });
+        const notes: any = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' });
         if (!notes.items.length) return;
 
         // get index of selected note in list and exit if it is already the last
@@ -495,14 +494,21 @@ joplin.plugins.register({
         if (index == 0) return;
 
         const lastNote: any = await DATA.get(['notes', notes.items[0].id], { fields: ['id', 'order'] });
-        var lastOrder: number = lastNote.order;
-        if (lastOrder == 0) {
-          alert("Last position (order) value is zero. This is currently not supported. Please move the last note(s) up instead.");
-          // wenn letze order == 0 => TODO was jetzt > letze order nehmen wert immer halbieren
-
+        if (lastNote.order == 0) {
+          const notesWithZeroOrder: any = getAllWithAttr(notes.items, 'order', 0);
+          if (notesWithZeroOrder.length > 0) {
+            // multiple notes found with zero order value
+            // so take order value from selected note and give each of them the halve value
+            var newOrder: number = selectedNote.order;
+            for (const note of notesWithZeroOrder) {
+              newOrder = (newOrder / 2);
+              await DATA.put(['notes', note.id], null, { order: newOrder });
+            }
+            await DATA.put(['notes', selectedNote.id], null, { order: (newOrder / 2) });
+          }
         } else {
           // previous order value is greater than zero - so halve the value
-          await DATA.put(['notes', selectedNote.id], null, { order: (lastOrder / 2) });
+          await DATA.put(['notes', selectedNote.id], null, { order: (lastNote.order / 2) });
         }
 
         // debug: write output to clipboard
