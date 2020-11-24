@@ -16,7 +16,8 @@ It provides [new commands](#new-commands) or maps [internal commands](#mapped-co
     - [Set URL](#set-url)
     - [Open URL in browser](#Open-url-in-browser)
     - [Touch note](#touch-note)
-    - [Move notes in list](#Move-notes-in-list)
+    - [Move note in list](#Move-note-in-list)
+    - [Quick move note](#quick-move-note)
   - [Mapped commands](#mapped-commands)
   - [User options](#user-options)
 - [Installation](#installation)
@@ -105,7 +106,7 @@ Useful to move a note to the top of a list when the 'Updated date' sort is activ
 
 > **NOTE** - Title or content of the note are _not_ changed
 
-#### Move notes in list
+#### Move note in list
 
 | Command Label  | Command ID     | Default Key          | Menu                  | Additional UI Locations |
 | -------------- | -------------- | -------------------- | --------------------- | ----------------------- |
@@ -120,15 +121,29 @@ Change the position of a note in the current note list (notebook), if `Sort note
 
 > **NOTE** - The default keys using num keys in order to trigger the commands also when focus is set to note list
 
+#### Quick move note
+
+| Command Label   | Command ID   | Default Key         | Menu             | Additional UI Locations |
+| --------------- | ------------ | ------------------- | ---------------- | ----------------------- |
+| Move to: `name` | `quickMove1` | `CmdOrCtrl+Shift+1` | `Note > Move to` | -                       |
+| Move to: `name` | `quickMove2` | `CmdOrCtrl+Shift+2` | `Note > Move to` | -                       |
+| Move to: `name` | `quickMove3` | `CmdOrCtrl+Shift+3` | `Note > Move to` | -                       |
+| Move to: `name` | `quickMove4` | `CmdOrCtrl+Shift+4` | `Note > Move to` | -                       |
+| Move to: `name` | `quickMove5` | `CmdOrCtrl+Shift+5` | `Note > Move to` | -                       |
+
+Quickly move (without interaction) selected note to one of five predefined notebooks.
+
+> **NOTE** - `name` is the user defined name of the notebook. See [user options](#user-options) for details
+
 ### Mapped commands
 
 The following internal commands are mapped to main menu entries. This allows to assign keyboard shortcuts to them.
 
-| Menu                   | Command Label    | Command ID     | Default Key         |
-| ---------------------- | ---------------- | -------------- | ------------------- |
-| Edit                   | Checkbox         | `textCheckbox` | `CmdOrCtrl+Shift+C` |
-| Note                   | Move to notebook | `moveToFolder` | `CmdOrCtrl+Shift+M` |
-| Note > Note properties | Set alarm        | `editAlarm`    | -                   |
+| Menu                | Command Label    | Command ID     | Default Key         |
+| ------------------- | ---------------- | -------------- | ------------------- |
+| `Edit`              | Checkbox         | `textCheckbox` | `CmdOrCtrl+Shift+C` |
+| `Note > Move to`    | Move to notebook | `moveToFolder` | `CmdOrCtrl+Shift+M` |
+| `Note > Properties` | Set alarm        | `editAlarm`    | -                   |
 
 ### User options
 
@@ -141,6 +156,10 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 - Show [Toggle to-do state](#toggle-to-do-state) on note toolbar:\
   _Select whether a button to toggle the to-do state (open/closed) shall be shown on the note toolbar or not._
+
+- Enter notebook name for [quick move](#quick-move-note) action X _(where X is 0..5)_:\
+  _Specify the name of a notebook to which the selected note can be moved quickly without interaction. This options exists 5 times.
+  Currently the names must be copied manually from the sidebar._
 
 ## Installation
 

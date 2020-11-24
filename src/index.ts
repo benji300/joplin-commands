@@ -1,24 +1,38 @@
 import joplin from 'api';
 import JoplinViewsDialogs from "api/JoplinViewsDialogs";
-import { MenuItemLocation, ToolbarButtonLocation } from 'api/types';
+import { MenuItem, MenuItemLocation, ToolbarButtonLocation } from 'api/types';
 
 const copy = require('../node_modules/copy-to-clipboard');
 
 // predefined keyboard shortcuts
 const accTextCheckbox = 'CmdOrCtrl+Shift+C';
 const accToggleTodoState = 'CmdOrCtrl+Shift+Space';
-const accMoveToFolder = 'CmdOrCtrl+Shift+M';
 const accMoveToTop = 'CmdOrCtrl+Alt+num8';
 const accMoveUp = 'CmdOrCtrl+num8';
 const accMoveDown = 'CmdOrCtrl+num2';
 const accMoveToBottom = 'CmdOrCtrl+Alt+num2';
+const accMoveToFolder = 'CmdOrCtrl+Shift+M';
+const accQuickMove1 = 'CmdOrCtrl+Shift+1';
+const accQuickMove2 = 'CmdOrCtrl+Shift+2';
+const accQuickMove3 = 'CmdOrCtrl+Shift+3';
+const accQuickMove4 = 'CmdOrCtrl+Shift+4';
+const accQuickMove5 = 'CmdOrCtrl+Shift+5';
 
 // helper functions
 function escapeTitleText(text: string) {
   return text.replace(/(\[|\])/g, '\\$1');
 }
 
-function getAllWithAttr(array: any, attr: any, value: any) {
+function getItemWithAttr(array: any, attr: any, value: any): any {
+  for (var i = 0; i < array.length; i += 1) {
+    if (array[i][attr] === value) {
+      return array[i];
+    }
+  }
+  return -1;
+}
+
+function getAllWithAttr(array: any, attr: any, value: any): any {
   const notes: any = [];
   for (var i = 0; i < array.length; i += 1) {
     if (array[i][attr] === value) {
@@ -75,9 +89,51 @@ joplin.plugins.register({
       description: 'Select whether a button to toggle the state (open/completed) of the to-do shall be shown on the note toolbar or not.'
     });
 
+    await SETTINGS.registerSetting('quickMove1', {
+      value: "<empty>",
+      type: 2,
+      section: 'com.benji300.joplin.commands.settings',
+      public: true,
+      label: 'Enter notebook name for quick move action 1',
+    });
+
+    await SETTINGS.registerSetting('quickMove2', {
+      value: "<empty>",
+      type: 2,
+      section: 'com.benji300.joplin.commands.settings',
+      public: true,
+      label: 'Enter notebook name for quick move action 2',
+    });
+
+    await SETTINGS.registerSetting('quickMove3', {
+      value: "<empty>",
+      type: 2,
+      section: 'com.benji300.joplin.commands.settings',
+      public: true,
+      label: 'Enter notebook name for quick move action 3',
+    });
+
+    await SETTINGS.registerSetting('quickMove4', {
+      value: "<empty>",
+      type: 2,
+      section: 'com.benji300.joplin.commands.settings',
+      public: true,
+      label: 'Enter notebook name for quick move action 4',
+    });
+
+    await SETTINGS.registerSetting('quickMove5', {
+      value: "<empty>",
+      type: 2,
+      section: 'com.benji300.joplin.commands.settings',
+      public: true,
+      label: 'Enter notebook name for quick move action 5',
+    });
+
     //#endregion
 
     //#region REGISTER NEW COMMANDS
+
+    //#region NOTE PROPERTIES
 
     // Command: toggleTodoState
     // Desc: Set 'todo_completed' of selected note to current timestamp (closed) or zero (open)
@@ -127,7 +183,7 @@ joplin.plugins.register({
         // copy each ID to clipboard
         const ids = [];
         for (let i = 0; i < selectedNoteIds.length; i++) {
-          const note = await DATA.get(['notes', selectedNoteIds[i]], { fields: ['id'] });
+          const note: any = await DATA.get(['notes', selectedNoteIds[i]], { fields: ['id'] });
           ids.push(note.id);
         }
         copy(ids.join('\n'));
@@ -149,7 +205,7 @@ joplin.plugins.register({
         // copy each markdown link to clipboard
         const links = [];
         for (let i = 0; i < selectedNoteIds.length; i++) {
-          const note = await DATA.get(['notes', selectedNoteIds[i]], { fields: ['id', 'title'] });
+          const note: any = await DATA.get(['notes', selectedNoteIds[i]], { fields: ['id', 'title'] });
           const mdLink = [];
           mdLink.push('[');
           mdLink.push(escapeTitleText(note.title));
@@ -256,6 +312,10 @@ joplin.plugins.register({
         await DATA.put(['notes', selectedNote.id], null, { updated_time: Date.now() });
       },
     });
+
+    //#endregion
+
+    //#region MOVE NOTES IN LIST
 
     // Command: moveToTop
     // Desc: Moves the selected note to the top of the list
@@ -437,7 +497,7 @@ joplin.plugins.register({
         const lastNote: any = await DATA.get(['notes', notes.items[0].id], { fields: ['id', 'order'] });
         var lastOrder: number = lastNote.order;
         if (lastOrder == 0) {
-          alert("TODO: last order is zero");
+          alert("Last position (order) value is zero. This is currently not supported. Please move the last note(s) up instead.");
           // wenn letze order == 0 => TODO was jetzt > letze order nehmen wert immer halbieren
 
         } else {
@@ -452,10 +512,100 @@ joplin.plugins.register({
 
     //#endregion
 
+    //#region MOVE NOTES TO
+
+    async function quickMoveToFolder(quickMoveSetting: string) {
+      // get the selected note and exit if none is currently selected
+      const selectedNote: any = await WORKSPACE.selectedNote();
+      if (!selectedNote) return;
+
+      // get the quick move folder from user settings and exit if empty
+      const quickMoveFolder: string = await SETTINGS.value(quickMoveSetting);
+      if (quickMoveFolder == "<empty>" || quickMoveFolder == "") return;
+
+      // check if quick move folder exist and exit if not
+      const folders: any = await DATA.get(['folders'], { fields: ['id', 'title'] });
+      const folder: any = getItemWithAttr(folders.items, 'title', quickMoveFolder);
+      if (folder == -1) return;
+
+      // move selected note to new folder
+      await DATA.put(['notes', selectedNote.id], null, { parent_id: folder.id });
+      console.info(`Move '${selectedNote.title}' to folder '${quickMoveFolder}'`);
+    }
+
+    // Command: quickMove1
+    // Desc: Moves the selected note directly to the specified folder
+    const lblQuickMove1: string = await SETTINGS.value('quickMove1');
+    await COMMANDS.register({
+      name: 'quickMove1',
+      label: `Move to: ${lblQuickMove1}`,
+      iconName: 'fas fa-shipping-fast',
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
+      execute: async () => {
+        quickMoveToFolder('quickMove1');
+      }
+    });
+
+    // Command: quickMove2
+    // Desc: Moves the selected note directly to the specified folder
+    const lblQuickMove2: string = await SETTINGS.value('quickMove2');
+    await COMMANDS.register({
+      name: 'quickMove2',
+      label: `Move to: ${lblQuickMove2}`,
+      iconName: 'fas fa-shipping-fast',
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
+      execute: async () => {
+        quickMoveToFolder('quickMove2');
+      }
+    });
+
+    // Command: quickMove3
+    // Desc: Moves the selected note directly to the specified folder
+    const lblQuickMove3: string = await SETTINGS.value('quickMove3');
+    await COMMANDS.register({
+      name: 'quickMove3',
+      label: `Move to: ${lblQuickMove3}`,
+      iconName: 'fas fa-shipping-fast',
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
+      execute: async () => {
+        quickMoveToFolder('quickMove3');
+      }
+    });
+
+    // Command: quickMove4
+    // Desc: Moves the selected note directly to the specified folder
+    const lblQuickMove4: string = await SETTINGS.value('quickMove4');
+    await COMMANDS.register({
+      name: 'quickMove4',
+      label: `Move to: ${lblQuickMove4}`,
+      iconName: 'fas fa-shipping-fast',
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
+      execute: async () => {
+        quickMoveToFolder('quickMove4');
+      }
+    });
+
+    // Command: quickMove5
+    // Desc: Moves the selected note directly to the specified folder
+    const lblQuickMove5: string = await SETTINGS.value('quickMove5');
+    await COMMANDS.register({
+      name: 'quickMove5',
+      label: `Move to: ${lblQuickMove5}`,
+      iconName: 'fas fa-shipping-fast',
+      enabledCondition: "oneNoteSelected && !inConflictFolder",
+      execute: async () => {
+        quickMoveToFolder('quickMove5');
+      }
+    });
+
+    //#endregion
+
+    //#endregion
+
     //#region MAP COMMANDS
 
-    // prepare "Note properties" sub-menu
-    const notePropertiesSubMenu = [
+    // prepare "Properties" submenu
+    const propertiesSubmenu: MenuItem[] = [
       {
         commandName: "copyNoteId"
       },
@@ -476,8 +626,8 @@ joplin.plugins.register({
       }
     ]
 
-    // prepare "Move in list" sub-menu
-    const moveNoteSubMenu = [
+    // prepare "Move in list" submenu
+    const moveInListSubmenu: MenuItem[] = [
       {
         commandName: "moveToTop",
         accelerator: accMoveToTop
@@ -496,18 +646,46 @@ joplin.plugins.register({
       }
     ];
 
+    // prepare "Move to folder" submenu
+    const moveToFolderSubmenu: MenuItem[] = [
+      {
+        commandName: "moveToFolder",
+        accelerator: accMoveToFolder
+      },
+      {
+        commandName: "quickMove1",
+        accelerator: accQuickMove1
+      },
+      {
+        commandName: "quickMove2",
+        accelerator: accQuickMove2
+      },
+      {
+        commandName: "quickMove3",
+        accelerator: accQuickMove3
+      },
+      {
+        commandName: "quickMove4",
+        accelerator: accQuickMove4
+      },
+      {
+        commandName: "quickMove5",
+        accelerator: accQuickMove5
+      }
+    ];
+
     // add commands to "edit" menu
     await joplin.views.menuItems.create('menEditTextCheckbox', 'textCheckbox', MenuItemLocation.Edit, { accelerator: accTextCheckbox });
 
     // add commands to "note" menu
     await joplin.views.menuItems.create('menNoteToggleTodoState', 'toggleTodoState', MenuItemLocation.Note, { accelerator: accToggleTodoState });
-    await joplin.views.menuItems.create('menNoteMoveToFolder', 'moveToFolder', MenuItemLocation.Note, { accelerator: accMoveToFolder });
-    await joplin.views.menus.create('menNoteMoveInList', 'Move in list', moveNoteSubMenu, MenuItemLocation.Note);
-    await joplin.views.menus.create('menNoteNoteProperties', 'Note properties', notePropertiesSubMenu, MenuItemLocation.Note);
+    await joplin.views.menus.create('menNoteNoteProperties', 'Properties', propertiesSubmenu, MenuItemLocation.Note);
+    await joplin.views.menus.create('menNoteMoveInList', 'Move in list', moveInListSubmenu, MenuItemLocation.Note);
+    await joplin.views.menus.create('menNoteMoveToFolder', 'Move to', moveToFolderSubmenu, MenuItemLocation.Note);
 
     // add commands to context menu
     // API 1.4.10: currently disabled - how to get current note on which the context menu was opened (must not be the selected note)
-    // API: sub-menus are not shown in context menu
+    // API: submenus are not shown in context menu
     // await joplin.views.menus.create('conListMoveInList', 'Move in list', moveNoteSubMenu, MenuItemLocation.NoteListContextMenu);
     // await joplin.views.menuItems.create('conListToggleTodoState', 'toggleTodoState', MenuItemLocation.NoteListContextMenu);
     // await joplin.views.menuItems.create('conListCopyNoteId', 'copyNoteId', MenuItemLocation.NoteListContextMenu);
