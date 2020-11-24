@@ -183,7 +183,7 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 ## Feedback
 
-- :think: Need help?
+- :thinking: Need help?
   - Ask a question on the [Joplin Forum](https://discourse.joplinapp.org/c/plugins/18) (TODO: Paste link to thread)
 - :bulb: An idea to improve or enhance the plugin?
   - [Request a new feature](https://github.com/benji300/joplin-commands/issues) or upvote [popular feature requests](https://github.com/benji300/joplin-commands/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement+sort%3Areactions-%2B1-desc+)
