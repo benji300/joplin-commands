@@ -6,7 +6,7 @@ It provides [new commands](#new-commands) or maps [internal commands](#mapped-co
 
 > :warning: **CAUTION** - Requires Joplin **v1.4.11** or newer
 
-> :warning: **CAUTION** - This is a development version at a very early stage. Please make a backup copy of the user data (especially from the database) before using this plugin. I don't think that the plugin causes any damage to the database, but unfortunately I can't rule it out completely. I neither have the time nor the possibilities to test all possible use cases.
+> :construction: **BETA** - This is a development version at a very early stage. Please make a backup copy of the user data (especially from the database) before using this plugin. I don't think that the plugin causes any damage to the database, but unfortunately I can't rule it out completely. I neither have the time nor the possibilities to test all possible use cases.
 
 ## Table of contents
 
@@ -183,7 +183,7 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 ## Feedback
 
-- :thinking: Need help?
+- :question: Need help?
   - Ask a question on the [Joplin Forum](https://discourse.joplinapp.org/c/plugins/18) (TODO: Paste link to thread)
 - :bulb: An idea to improve or enhance the plugin?
   - [Request a new feature](https://github.com/benji300/joplin-commands/issues) or upvote [popular feature requests](https://github.com/benji300/joplin-commands/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement+sort%3Areactions-%2B1-desc+)
