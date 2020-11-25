@@ -1,7 +1,7 @@
 {
   "name": "com.benji300.joplin.commands",
   "version": "0.1.0",
-  "description": "Collection of commands to enhance working with notes and to-dos.",
+  "description": "Collection of commands to improve and speed up your work with Joplin.",
   "keywords": [
     "joplin",
     "plugin",
