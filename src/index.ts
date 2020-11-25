@@ -616,20 +616,14 @@ joplin.plugins.register({
         commandName: "copyNoteId"
       },
       {
-        commandName: "copyMarkdownLink"
-      },
-      {
         commandName: "editAlarm"
       },
       {
         commandName: "editURL"
-      },
+      }
       // {
       //   commandName: "openURLInBrowser"
-      // },
-      {
-        commandName: "touchNote"
-      }
+      // }
     ]
 
     // prepare "Move in list" submenu
@@ -649,15 +643,14 @@ joplin.plugins.register({
       {
         commandName: "moveToBottom",
         accelerator: accMoveToBottom
+      },
+      {
+        commandName: "touchNote"
       }
     ];
 
-    // prepare "Move to folder" submenu
+    // prepare "Move to notebook" submenu
     const moveToFolderSubmenu: MenuItem[] = [
-      {
-        commandName: "moveToFolder",
-        accelerator: accMoveToFolder
-      },
       {
         commandName: "quickMove1",
         accelerator: accQuickMove1
@@ -677,6 +670,10 @@ joplin.plugins.register({
       {
         commandName: "quickMove5",
         accelerator: accQuickMove5
+      },
+      {
+        commandName: "moveToFolder",
+        accelerator: accMoveToFolder
       }
     ];
 
@@ -685,9 +682,10 @@ joplin.plugins.register({
 
     // add commands to "note" menu
     await joplin.views.menuItems.create('menNoteToggleTodoState', 'toggleTodoState', MenuItemLocation.Note, { accelerator: accToggleTodoState });
+    await joplin.views.menuItems.create('menNoteCopyMarkdownLink', 'copyMarkdownLink', MenuItemLocation.Note);
     await joplin.views.menus.create('menNoteNoteProperties', 'Properties', propertiesSubmenu, MenuItemLocation.Note);
     await joplin.views.menus.create('menNoteMoveInList', 'Move in list', moveInListSubmenu, MenuItemLocation.Note);
-    await joplin.views.menus.create('menNoteMoveToFolder', 'Move to', moveToFolderSubmenu, MenuItemLocation.Note);
+    await joplin.views.menus.create('menNoteMoveToFolder', 'Move to notebook', moveToFolderSubmenu, MenuItemLocation.Note);
 
     // add commands to context menu
     // API 1.4.10: currently disabled - how to get current note on which the context menu was opened (must not be the selected note)

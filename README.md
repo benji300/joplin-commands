@@ -14,8 +14,8 @@ Furthermore it maps [internal commands](#mapped-commands) to the main menu to al
 - [Features](#features)
   - [New commands](#new-commands)
     - [Toggle to-do state](#toggle-to-do-state)
-    - [Copy note ID](#copy-note-id)
     - [Copy Markdown link](#copy-markdown-link)
+    - [Copy note ID](#copy-note-id)
     - [Set URL](#set-url)
     - [Open URL in browser](#Open-url-in-browser)
     - [Touch note](#touch-note)
@@ -34,8 +34,9 @@ Furthermore it maps [internal commands](#mapped-commands) to the main menu to al
 
 - Add new [commands](#new-commands) to ...
   - Update note properties (e.g. [Toggle to-do state](#toggle-to-do-state))
-  - [Move notes](#move-notes) in current note list
-  - and many more...
+  - [Move note](#move-note-in-list) in current note list
+  - Quickly [move note to notebook](#quick-move-note) without interaction
+  - and more...
 - Map Joplin [internal commands](#mapped-commands) to the main menu
   - Allows to assign keyboard shortcuts to them
 - Add [user options](#user-options) to specify additional display locations for commands
@@ -60,19 +61,11 @@ Set the status of the selected to-do to either completed or open.
 
 > **NOTE** - Works only with to-dos.
 
-#### Copy note ID
-
-| Command Label | Command ID   | Default Key | Menu                     | Additional UI Locations |
-| ------------- | ------------ | ----------- | ------------------------ | ----------------------- |
-| Copy note ID  | `copyNoteId` | -           | `Note > Note properties` | -                       |
-
-Copy the IDs of all selected notes to the clipboard.
-
 #### Copy Markdown link
 
-| Command Label     | Command ID         | Default Key | Menu                     | Additional UI Locations |
-| ----------------- | ------------------ | ----------- | ------------------------ | ----------------------- |
-| Copy Markown link | `copyMarkdownLink` | -           | `Note > Note properties` | -                       |
+| Command Label     | Command ID         | Default Key | Menu   | Additional UI Locations |
+| ----------------- | ------------------ | ----------- | ------ | ----------------------- |
+| Copy Markown link | `copyMarkdownLink` | -           | `Note` | -                       |
 
 Basically a replica of the internal command. But with an entry in the main menu, so that a keyboard shortcut can be assigned to it.
 
@@ -80,11 +73,19 @@ Also the command is available via the command palette now.
 
 > **NOTE** - Works also with multiple selected notes.
 
+#### Copy note ID
+
+| Command Label | Command ID   | Default Key | Menu                | Additional UI Locations |
+| ------------- | ------------ | ----------- | ------------------- | ----------------------- |
+| Copy note ID  | `copyNoteId` | -           | `Note > Properties` | -                       |
+
+Copy the IDs of all selected notes to the clipboard.
+
 #### Set URL
 
-| Command Label | Command ID | Default Key | Menu                     | Additional UI Locations |
-| ------------- | ---------- | ----------- | ------------------------ | ----------------------- |
-| Set URL       | `editURL`  | -           | `Note > Note properties` | -                       |
+| Command Label | Command ID | Default Key | Menu                | Additional UI Locations |
+| ------------- | ---------- | ----------- | ------------------- | ----------------------- |
+| Set URL       | `editURL`  | -           | `Note > Properties` | -                       |
 
 Opens dialog to directly edit the URL of the note.
 
@@ -92,17 +93,17 @@ Opens dialog to directly edit the URL of the note.
 
 > :construction: **NOTE** - This command is urrently not implemented!
 
-| Command Label       | Command ID         | Default Key | Menu                     | Additional UI Locations |
-| ------------------- | ------------------ | ----------- | ------------------------ | ----------------------- |
-| Open URL in browser | `openURLInBrowser` | `-`         | `Note > Note properties` | Note toolbar            |
+| Command Label       | Command ID         | Default Key | Menu                | Additional UI Locations |
+| ------------------- | ------------------ | ----------- | ------------------- | ----------------------- |
+| Open URL in browser | `openURLInBrowser` | `-`         | `Note > Properties` | Note toolbar            |
 
-TODO describe more detailed...
+Opens the note URL in the system's default browser.
 
 #### Touch note
 
-| Command Label | Command ID  | Default Key | Menu                     | Additional UI Locations |
-| ------------- | ----------- | ----------- | ------------------------ | ----------------------- |
-| Touch note    | `touchNote` | -           | `Note > Note properties` | -                       |
+| Command Label | Command ID  | Default Key | Menu                  | Additional UI Locations |
+| ------------- | ----------- | ----------- | --------------------- | ----------------------- |
+| Touch note    | `touchNote` | -           | `Note > Move in list` | -                       |
 
 "Touch" the last updated timestamp of the selected note and set it to now.
 Useful to move a note to the top of a list when the 'Updated date' sort is active.
@@ -126,13 +127,13 @@ Change the position of a note in the current note list (notebook), if `Sort note
 
 #### Quick move note
 
-| Command Label   | Command ID   | Default Key         | Menu             | Additional UI Locations |
-| --------------- | ------------ | ------------------- | ---------------- | ----------------------- |
-| Move to: `name` | `quickMove1` | `CmdOrCtrl+Shift+1` | `Note > Move to` | -                       |
-| Move to: `name` | `quickMove2` | `CmdOrCtrl+Shift+2` | `Note > Move to` | -                       |
-| Move to: `name` | `quickMove3` | `CmdOrCtrl+Shift+3` | `Note > Move to` | -                       |
-| Move to: `name` | `quickMove4` | `CmdOrCtrl+Shift+4` | `Note > Move to` | -                       |
-| Move to: `name` | `quickMove5` | `CmdOrCtrl+Shift+5` | `Note > Move to` | -                       |
+| Command Label   | Command ID   | Default Key         | Menu                      | Additional UI Locations |
+| --------------- | ------------ | ------------------- | ------------------------- | ----------------------- |
+| Move to: `name` | `quickMove1` | `CmdOrCtrl+Shift+1` | `Note > Move to notebook` | -                       |
+| Move to: `name` | `quickMove2` | `CmdOrCtrl+Shift+2` | `Note > Move to notebook` | -                       |
+| Move to: `name` | `quickMove3` | `CmdOrCtrl+Shift+3` | `Note > Move to notebook` | -                       |
+| Move to: `name` | `quickMove4` | `CmdOrCtrl+Shift+4` | `Note > Move to notebook` | -                       |
+| Move to: `name` | `quickMove5` | `CmdOrCtrl+Shift+5` | `Note > Move to notebook` | -                       |
 
 Quickly move (without interaction) selected note to one of five predefined notebooks.
 
@@ -142,11 +143,11 @@ Quickly move (without interaction) selected note to one of five predefined noteb
 
 The following internal commands are mapped to main menu entries. This allows to assign keyboard shortcuts to them.
 
-| Menu                | Command Label    | Command ID     | Default Key         |
-| ------------------- | ---------------- | -------------- | ------------------- |
-| `Edit`              | Checkbox         | `textCheckbox` | `CmdOrCtrl+Shift+C` |
-| `Note > Move to`    | Move to notebook | `moveToFolder` | `CmdOrCtrl+Shift+M` |
-| `Note > Properties` | Set alarm        | `editAlarm`    | -                   |
+| Menu                      | Command Label    | Command ID     | Default Key         |
+| ------------------------- | ---------------- | -------------- | ------------------- |
+| `Edit`                    | Checkbox         | `textCheckbox` | `CmdOrCtrl+Shift+C` |
+| `Note > Properties`       | Set alarm        | `editAlarm`    | -                   |
+| `Note > Move to notebook` | Move to notebook | `moveToFolder` | `CmdOrCtrl+Shift+M` |
 
 ### User options
 
