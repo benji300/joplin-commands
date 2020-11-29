@@ -1,11 +1,10 @@
 {
   "name": "com.benji300.joplin.commands",
   "version": "0.1.0",
-  "description": "Collection of commands to improve and speed up your work with Joplin.",
+  "description": "Collection of commands to improve and speed up your daily work with Joplin.",
   "keywords": [
     "joplin",
-    "plugin",
-    "commands"
+    "plugin"
   ],
   "author": "Benji300",
   "license": "MIT",

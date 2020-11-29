@@ -2,10 +2,10 @@
 
 Joplin Command Collection is a plugin to extend the UX of [Joplin's](https://joplinapp.org/) desktop application.
 
-It provides a collection of [new commands](#new-commands) to improve and speed up your work with Joplin. Especially working with keyboard shall be improved.
-Furthermore it maps [internal commands](#mapped-commands) to the main menu to allow to assign keyboard shortcuts to them.
+It provides a collection of [new commands](#new-commands) to improve and speed up your daily work with the keyboard in Joplin.
+To do so it also maps some [internal commands](#mapped-commands) to the main menu to allow to assign keyboard shortcuts to them.
 
-> :warning: **CAUTION** - Requires Joplin **v1.4.11** or newer
+> :warning: **CAUTION** - Requires Joplin **v1.4.16** or newer
 
 > :construction: **BETA** - This is a development version at a very early stage. Please make a backup copy of the user data (especially from the database) before using this plugin. I don't think that the plugin causes any damage to the database, but unfortunately I can't rule it out completely. I neither have the time nor the possibilities to test all possible use cases.
 
@@ -32,7 +32,7 @@ Furthermore it maps [internal commands](#mapped-commands) to the main menu to al
 
 ## Features
 
-- Add new [commands](#new-commands) to ...
+- Add [new commands](#new-commands) to ...
   - Update note properties (e.g. [Toggle to-do state](#toggle-to-do-state))
   - [Move note](#move-note-in-list) in current note list
   - Quickly [move note to notebook](#quick-move-note) without interaction
@@ -163,7 +163,7 @@ This plugin adds the following user options which can be accessed via `Tools > O
 
 - Enter notebook name for [quick move](#quick-move-note) action X _(where X is 0..5)_:\
   _Specify the name of a notebook to which the selected note can be moved quickly without interaction. This options exists 5 times.
-  Currently the names must be copied manually from the sidebar._
+  Currently the notebook names must be copied manually from the sidebar._
 
 ## Installation
 
