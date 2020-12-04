@@ -1,5 +1,5 @@
 import joplin from 'api';
-import { MenuItem, MenuItemLocation, ToolbarButtonLocation } from 'api/types';
+import { SettingItemType, MenuItem, MenuItemLocation, ToolbarButtonLocation } from 'api/types';
 
 const copy = require('../node_modules/copy-to-clipboard');
 
@@ -121,7 +121,7 @@ joplin.plugins.register({
 
     await SETTINGS.registerSetting('keepMovedNoteSelected', {
       value: false,
-      type: 3,
+      type: SettingItemType.Bool,
       section: 'com.benji300.joplin.commands.settings',
       public: true,
       label: 'Keep moved note selected',
@@ -382,7 +382,7 @@ joplin.plugins.register({
         }
 
         // debug: write output to clipboard
-        await copy(JSON.stringify(await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'DESC' })));
+        // await copy(JSON.stringify(await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'DESC' })));
       }
     });
 
@@ -443,7 +443,7 @@ joplin.plugins.register({
         }
 
         // debug: write output to clipboard
-        await copy(JSON.stringify(await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' })));
+        // await copy(JSON.stringify(await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' })));
       }
     });
 
@@ -495,7 +495,7 @@ joplin.plugins.register({
         }
 
         // debug: write output to clipboard
-        await copy(JSON.stringify(await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' })));
+        // await copy(JSON.stringify(await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' })));
       }
     });
 
