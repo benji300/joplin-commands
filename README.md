@@ -163,6 +163,10 @@ This plugin adds the following user options which can be accessed via `Tools > O
   _Specify the name of a notebook to which the selected note can be moved quickly without interaction. This options exists 5 times.
   Currently the notebook names must be copied manually from the sidebar._
 
+- Keep moved note selected:\
+  If selected note is moved via one of the [quick move](#quick-move-note) actions, it shall still be selected afterwards.\
+  Otherwise the next note within the current list will be selected.
+
 ## Installation
 
 - Download the latest released JPL package (`com.benji300.joplin.commands.jpl`) from [here](https://github.com/benji300/joplin-commands/releases)

@@ -119,6 +119,15 @@ joplin.plugins.register({
       label: 'Enter notebook name for quick move action 5',
     });
 
+    await SETTINGS.registerSetting('keepMovedNoteSelected', {
+      value: false,
+      type: 3,
+      section: 'com.benji300.joplin.commands.settings',
+      public: true,
+      label: 'Keep moved note selected',
+      description: 'If selected note is moved via one of the quick move actions, it shall still be selected afterwards. Otherwise the next note within the current list will be selected.'
+    });
+
     //#endregion
 
     //#region REGISTER NEW COMMANDS
@@ -510,7 +519,12 @@ joplin.plugins.register({
 
       // move selected note to new folder
       await DATA.put(['notes', selectedNote.id], null, { parent_id: folder.id });
-      console.info(`Move '${selectedNote.title}' to folder '${quickMoveFolder}'`);
+
+      // keep moved note selected if enabled
+      const keepMovedNoteSelected: boolean = await SETTINGS.value('keepMovedNoteSelected');
+      if (keepMovedNoteSelected) {
+        COMMANDS.execute('openNote', selectedNote.id);
+      }
     }
 
     // Command: quickMove1
