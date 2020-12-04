@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- None
+
+## [0.2.0] - 2020-12-04
+
+### Added
+
 - New command to open source URL of note in the default browser (`openURL`) ([#4](https://github.com/benji300/joplin-commands/issues/4))
 - Add option to keep moved note selected ([#7](https://github.com/benji300/joplin-commands/issues/7))
 
