@@ -1,5 +1,4 @@
 import joplin from 'api';
-import JoplinViewsDialogs from "api/JoplinViewsDialogs";
 import { MenuItem, MenuItemLocation, ToolbarButtonLocation } from 'api/types';
 
 const copy = require('../node_modules/copy-to-clipboard');
@@ -70,15 +69,6 @@ joplin.plugins.register({
       iconName: 'fas fa-terminal',
       description: 'Note: Changes are only applied after a restart.'
     });
-
-    // await SETTINGS.registerSetting('showOpenURLInBrowserToolbar', {
-    //   value: false,
-    //   type: 3,
-    //   section: 'com.benji300.joplin.commands.settings',
-    //   public: true,
-    //   label: 'Show "Open URL in browser" on note toolbar',
-    //   description: 'Select whether a button to open the note URL in the default browser shall be shown on the note toolbar or not.'
-    // });
 
     await SETTINGS.registerSetting('showToggleTodoStateToolbar', {
       value: false,
@@ -253,48 +243,32 @@ joplin.plugins.register({
       }
     });
 
-    // // Command: openURLInBrowser
-    // // Desc: todo
-    // await COMMANDS.register({
-    //   name: 'openURLInBrowser',
-    //   label: 'Open URL in browser',
-    //   iconName: 'fas fa-external-link-square-alt',
-    //   // TODO enableCondition possible? only if URL is set
-    //   enabledCondition: "oneNoteSelected",
-    //   execute: async () => {
-    //     // get the selected note and exit if none is currently selected
-    //     const selectedNote = await WORKSPACE.selectedNote();
-    //     if (!selectedNote) return;
+    // Command: openURL
+    // Desc: Opens the note URL in the system's default browser.
+    await COMMANDS.register({
+      name: 'openURL',
+      label: 'Open URL in browser',
+      iconName: 'fas fa-external-link-square-alt',
+      enabledCondition: "oneNoteSelected",
+      execute: async () => {
+        // get the selected note and exit if none is currently selected
+        const selectedNote = await WORKSPACE.selectedNote();
+        if (!selectedNote) return;
 
-    //     // exit if 'source_url' is not set for note
-    //     if (!selectedNote.source_url) return;
+        // exit if 'source_url' is not set for note
+        if (!selectedNote.source_url) return;
 
-    //     // open URL in default browser
-    //     // TODO wait for feedback from forum
-    //     // https://discourse.joplinapp.org/t/how-to-open-url-in-default-browser-from-plugin/12376
-
-    //     // 1: from joplin code - does not work
-    //     // const bridge = require('electron').remote.require('./bridge').default;
-    //     // bridge().openExternal(url);
-
-    //     // 2: electron shell - does not work
-    //     // const { shell } = require('electron');
-    //     // shell.openExternal('https://github.com');
-
-    //     // 3: npm open - does not work
-    //     // https://github.com/pwnall/node-open
-    //     // https://www.npmjs.com/package/open
-    //     // first: npm install open
-    //     // await open("http://www.google.com");
-    //     // await open(note.source_url);
-
-    //     // 4: built in open command - does not work
-    //     // open('https://www.google.com', '_blank');
-    //     // open(selectedNote.source_url, '_blank');
-
-    //     await DIALOGS.showMessageBox(`Open URL: ${selectedNote.source_url}`);
-    //   }
-    // });
+        // try to open the URL in the system's default browser
+        try {
+          const { exec } = require('child_process');
+          var start = (process.platform == 'darwin' ? 'open' : process.platform == 'win32' ? 'start' : 'xdg-open');
+          const subprocess = exec(start + ' ' + selectedNote.source_url);
+          subprocess.unref();
+        } catch (error) {
+          DIALOGS.showMessageBox(`Something went wrong... could not open requested URL.`);
+        }
+      }
+    });
 
     // Command: touchNote
     // Desc: Set 'updated_time' of selected note to current timestamp
@@ -620,10 +594,10 @@ joplin.plugins.register({
       },
       {
         commandName: "editURL"
+      },
+      {
+        commandName: "openURL"
       }
-      // {
-      //   commandName: "openURLInBrowser"
-      // }
     ]
 
     // prepare "Move in list" submenu
@@ -695,17 +669,10 @@ joplin.plugins.register({
     // await joplin.views.menuItems.create('conListCopyNoteId', 'copyNoteId', MenuItemLocation.NoteListContextMenu);
 
     // add commands to note toolbar depending on user options
-    // const showOpenURLInBrowserToolbar = await SETTINGS.value('showOpenURLInBrowserToolbar');
-    // if (showOpenURLInBrowserToolbar) {
-    //   await joplin.views.toolbarButtons.create('barNoteOpenURLInBrowser', 'openURLInBrowser', ToolbarButtonLocation.NoteToolbar);
-    // }
     const showToggleTodoStateToolbar = await SETTINGS.value('showToggleTodoStateToolbar');
     if (showToggleTodoStateToolbar) {
       await joplin.views.toolbarButtons.create('barNoteToggleTodoState', 'toggleTodoState', ToolbarButtonLocation.NoteToolbar);
     }
-
-    // TODO test command icons here
-    // await joplin.views.toolbarButtons.create('touchNote', ToolbarButtonLocation.NoteToolbar);
 
     //#endregion
 

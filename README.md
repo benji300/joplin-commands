@@ -91,11 +91,9 @@ Opens dialog to directly edit the URL of the note.
 
 #### Open URL in browser
 
-> :construction: **NOTE** - This command is urrently not implemented!
-
-| Command Label       | Command ID         | Default Key | Menu                | Additional UI Locations |
-| ------------------- | ------------------ | ----------- | ------------------- | ----------------------- |
-| Open URL in browser | `openURLInBrowser` | `-`         | `Note > Properties` | Note toolbar            |
+| Command Label       | Command ID | Default Key | Menu                | Additional UI Locations |
+| ------------------- | ---------- | ----------- | ------------------- | ----------------------- |
+| Open URL in browser | `openURL`  | `-`         | `Note > Properties` | Note toolbar            |
 
 Opens the note URL in the system's default browser.
 

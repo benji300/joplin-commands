@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- None
+- New command to open source URL of note in the default browser (`openURL`) ([#4](https://github.com/benji300/joplin-commands/issues/4))
 
 ## [0.1.0] - 2020-11-29
 
