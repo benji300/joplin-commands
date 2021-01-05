@@ -3,7 +3,7 @@
 Joplin Command Collection is a plugin to extend the UX of [Joplin's](https://joplinapp.org/) desktop application.
 
 It provides a collection of [new commands](#new-commands) to improve and speed up your daily work with the keyboard in Joplin.
-To do so it also maps some [internal commands](#mapped-commands) to the main menu to allow to assign keyboard shortcuts to them.
+Furthermore it maps also some [internal commands](#mapped-commands) to the main menu to allow to assign keyboard shortcuts to them.
 
 > :warning: **CAUTION** - Requires Joplin **v1.4.16** or newer
 
