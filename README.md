@@ -5,9 +5,7 @@ Joplin Command Collection is a plugin to extend the UX of [Joplin's](https://jop
 It provides a collection of [new commands](#new-commands) to improve and speed up your daily work with the keyboard in Joplin.
 Furthermore it maps also some [internal commands](#mapped-commands) to the main menu to allow to assign keyboard shortcuts to them.
 
-> :warning: **CAUTION** - Requires Joplin **v1.4.16** or newer
-
-> :construction: **BETA** - This is a development version at a very early stage. Please make a backup copy of the user data (especially from the database) before using this plugin. I don't think that the plugin causes any damage to the database, but unfortunately I can't rule it out completely. I neither have the time nor the possibilities to test all possible use cases.
+> :warning: **CAUTION** - Requires Joplin **v1.5.7** or newer
 
 ## Table of contents
 
@@ -26,6 +24,7 @@ Furthermore it maps also some [internal commands](#mapped-commands) to the main 
 - [Installation](#installation)
 - [Uninstallation](#uninstallation)
 - [Feedback](#feedback)
+- [Support](#support)
 - [Development](#development)
 - [Changes](#changes)
 - [License](#license)
@@ -149,30 +148,16 @@ The following internal commands are mapped to main menu entries. This allows to 
 
 ### User options
 
-This plugin adds the following user options which can be accessed via `Tools > Options > Note Extensions`.
+This plugin adds provides user options which can be changed via `Tools > Options > Command Collection`.
 
 > **NOTE** - Changes to the user options are only applied after a restart of the app
 
-- Show [Open URL in browser](#open-url-in-browser) on note toolbar:\
-  _Select whether a button to open the note URL in the default browser shall be shown on the note toolbar or not._
-
-- Show [Toggle to-do state](#toggle-to-do-state) on note toolbar:\
-  _Select whether a button to toggle the to-do state (open/closed) shall be shown on the note toolbar or not._
-
-- Enter notebook name for [quick move](#quick-move-note) action X _(where X is 0..5)_:\
-  _Specify the name of a notebook to which the selected note can be moved quickly without interaction. This options exists 5 times.
-  Currently the notebook names must be copied manually from the sidebar._
-
-- Keep moved note selected:\
-  If selected note is moved via one of the [quick move](#quick-move-note) actions, it shall still be selected afterwards.\
-  Otherwise the next note within the current list will be selected.
-
 ## Installation
 
-- Download the latest released JPL package (`com.benji300.joplin.commands.jpl`) from [here](https://github.com/benji300/joplin-commands/releases)
+- Download the latest released JPL package (`joplin-plugin-benji300-commands.jpl`) from [here](https://github.com/benji300/joplin-commands/releases)
 - Open Joplin
 - Navigate to `Tools > Options > Plugins`
-- Click `Install plugin` and select the previously downloaded `jpl` file
+- Press `Install plugin` and select the previously downloaded `jpl` file
 - Confirm selection
 - Restart Joplin to enable the plugin
 
@@ -181,7 +166,7 @@ This plugin adds the following user options which can be accessed via `Tools > O
 - Open Joplin
 - Navigate to `Tools > Options > Plugins`
 - Search for the `Command Collection` plugin
-- Click `Delete` to remove the plugin from the user profile directory
+- Press `Delete` to remove the plugin from the user profile directory
   - Alternatively you can also disable the plugin by clicking on the toggle button
 - Restart Joplin
 
@@ -194,6 +179,12 @@ This plugin adds the following user options which can be accessed via `Tools > O
 - :bug: Found a bug?
   - File an issue on [GitHub](https://github.com/benji300/joplin-commands/issues)
 
+## Support
+
+You like this plugin as much as I do and it helps you in your daily work with Joplin?
+
+Then I would be very happy if you would buy me a beer via [PayPal](https://www.paypal.com/donate?hosted_button_id=6FHDGK3PTNU22) :wink::beer:
+
 ## Development
 
 ### Building the plugin
@@ -204,18 +195,12 @@ If you want to build the plugin by your own simply run:
 npm run dist
 ```
 
-Or run to create also the archives:
-
-```
-npm run release
-```
-
 ## Changes
 
 See [CHANGELOG](./CHANGELOG.md) for details.
 
 ## License
 
-Copyright (c) 2020 Benjamin Seifert
+Copyright (c) 2021 Benjamin Seifert
 
 MIT License. See [LICENSE](./LICENSE) for more information.

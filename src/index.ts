@@ -50,7 +50,6 @@ function getIndexWithAttr(array: any, attr: any, value: any): any {
   return -1;
 }
 
-// register plugin
 joplin.plugins.register({
   onStart: async function () {
     const COMMANDS = joplin.commands;
@@ -59,15 +58,12 @@ joplin.plugins.register({
     const SETTINGS = joplin.settings;
     const WORKSPACE = joplin.workspace;
 
-    // prepare dialog/view/panel objects
-    const dialogEditURL = await DIALOGS.create('com.benji300.joplin.commands.dialog');
-
     //#region REGISTER USER OPTIONS
 
-    await SETTINGS.registerSection('com.benji300.joplin.commands.settings', {
+    await SETTINGS.registerSection('commands.settings', {
       label: 'Command Collection',
       iconName: 'fas fa-terminal',
-      description: 'Note: Changes are only applied after a restart.'
+      description: 'Changes are only applied after a restart.'
     });
 
     await SETTINGS.registerSetting('showToggleTodoStateToolbar', {
@@ -84,7 +80,7 @@ joplin.plugins.register({
       type: 2,
       section: 'com.benji300.joplin.commands.settings',
       public: true,
-      label: 'Enter notebook name for quick move action 1',
+      label: 'Enter notebook name for quick move action 1. Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar.',
     });
 
     await SETTINGS.registerSetting('quickMove2', {
@@ -92,7 +88,7 @@ joplin.plugins.register({
       type: 2,
       section: 'com.benji300.joplin.commands.settings',
       public: true,
-      label: 'Enter notebook name for quick move action 2',
+      label: 'Enter notebook name for quick move action 2. Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar.',
     });
 
     await SETTINGS.registerSetting('quickMove3', {
@@ -100,7 +96,7 @@ joplin.plugins.register({
       type: 2,
       section: 'com.benji300.joplin.commands.settings',
       public: true,
-      label: 'Enter notebook name for quick move action 3',
+      label: 'Enter notebook name for quick move action 3. Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar.',
     });
 
     await SETTINGS.registerSetting('quickMove4', {
@@ -108,7 +104,7 @@ joplin.plugins.register({
       type: 2,
       section: 'com.benji300.joplin.commands.settings',
       public: true,
-      label: 'Enter notebook name for quick move action 4',
+      label: 'Enter notebook name for quick move action 4. Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar.',
     });
 
     await SETTINGS.registerSetting('quickMove5', {
@@ -116,7 +112,7 @@ joplin.plugins.register({
       type: 2,
       section: 'com.benji300.joplin.commands.settings',
       public: true,
-      label: 'Enter notebook name for quick move action 5',
+      label: 'Enter notebook name for quick move action 5. Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar.',
     });
 
     await SETTINGS.registerSetting('keepMovedNoteSelected', {
@@ -125,8 +121,15 @@ joplin.plugins.register({
       section: 'com.benji300.joplin.commands.settings',
       public: true,
       label: 'Keep moved note selected',
-      description: 'If selected note is moved via one of the quick move actions, it shall still be selected afterwards. Otherwise the next note within the current list will be selected.'
+      description: 'If selected note is moved via one of the quick move actions, it will still be selected afterwards. Otherwise the next note within the current list will be selected.'
     });
+
+    //#endregion
+
+    //#region INIT LOCAL VARIABLES
+
+    // prepare dialog/view/panel objects
+    const dialogEditURL = await DIALOGS.create('commands.dialog');
 
     //#endregion
 
@@ -596,7 +599,7 @@ joplin.plugins.register({
 
     //#endregion
 
-    //#region MAP COMMANDS
+    //#region MAP COMMANDS TO MENUS
 
     // prepare "Properties" submenu
     const propertiesSubmenu: MenuItem[] = [
