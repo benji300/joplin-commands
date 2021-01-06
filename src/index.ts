@@ -134,6 +134,10 @@ joplin.plugins.register({
 
     //#endregion
 
+    //#region COMMAND HELPER FUNCTIONS
+
+    //#endregion
+
     //#region REGISTER NEW COMMANDS
 
     //#region FOLDER COMMANDS
@@ -147,22 +151,24 @@ joplin.plugins.register({
       execute: async (folderId: string) => {
         let folder: any;
 
-        // get the folder and exit if not found
         if (folderId) {
+
           // called from context menu
           folder = await DATA.get(['folders', folderId], { fields: ['title'] });
         } else {
+
           // get the parent folder name of the selected note
           const selectedNote = await WORKSPACE.selectedNote();
-          if (!selectedNote) return;
-
-          const note: any = await DATA.get(['notes', selectedNote.id], { fields: ['parent_id'] });
-          folder = await DATA.get(['folders', note.parent_id], { fields: ['title'] });
+          if (selectedNote) {
+            const note: any = await DATA.get(['notes', selectedNote.id], { fields: ['parent_id'] });
+            folder = await DATA.get(['folders', note.parent_id], { fields: ['title'] });
+          }
         }
-        if (!folder) return;
 
         // copy name to clipboard
-        copy(folder.title);
+        if (folder) {
+          copy(folder.title);
+        }
       }
     });
 
@@ -176,30 +182,25 @@ joplin.plugins.register({
       name: 'toggleTodoState',
       label: 'Toggle to-do state',
       iconName: 'fas fa-check',
-      enabledCondition: "noteIsTodo && oneNoteSelected && !inConflictFolder",
-      execute: async () => {
-        // get the selected note and exit if none is currently selected
-        const selectedNote = await WORKSPACE.selectedNote();
-        if (!selectedNote) return;
+      enabledCondition: "someNotesSelected && !inConflictFolder",
+      execute: async (noteIds: string[]) => {
+        // get selected note ids and return if empty
+        let selectedNoteIds = await WORKSPACE.selectedNoteIds();
+        if (!selectedNoteIds && noteIds) selectedNoteIds = noteIds;
+        if (!selectedNoteIds) return;
 
-        if (selectedNote.todo_completed) {
-          await DATA.put(['notes', selectedNote.id], null, { todo_completed: 0 });
-        } else {
-          await DATA.put(['notes', selectedNote.id], null, { todo_completed: Date.now() });
+        // toggle state for all todos
+        for (const noteId of selectedNoteIds) {
+          const note: any = await DATA.get(['notes', noteId], { fields: ['id', 'is_todo', 'todo_completed'] });
+
+          if (note && note.is_todo) {
+            if (note.todo_completed) {
+              await DATA.put(['notes', note.id], null, { todo_completed: 0 });
+            } else {
+              await DATA.put(['notes', note.id], null, { todo_completed: Date.now() });
+            }
+          }
         }
-
-        // implementation to toggle state for multiple todos - not sure if it works correct
-        // const noteIds = await WORKSPACE.selectedNoteIds();
-        // for (let i = 0; i < noteIds.length; i++) {
-        //   const note = await joplin.data.get(['notes', noteIds[i]], { fields: ['todo_completed'] });
-        //   if (note.is_todo) {
-        //     if (note.todo_completed) {
-        //       await DATA.put(['notes', noteIds[i]], null, { todo_completed: 0 });
-        //     } else {
-        //       await DATA.put(['notes', noteIds[i]], null, { todo_completed: Date.now() });
-        //     }
-        //   }
-        // }
       }
     });
 
@@ -210,16 +211,16 @@ joplin.plugins.register({
       label: 'Copy note ID',
       iconName: 'fas fa-copy',
       enabledCondition: "someNotesSelected",
-      execute: async () => {
-        // get the selected note IDs and exit if none is currently selected
-        const selectedNoteIds = await WORKSPACE.selectedNoteIds();
+      execute: async (noteIds: string[]) => {
+        // get selected note ids and return if empty
+        let selectedNoteIds = await WORKSPACE.selectedNoteIds();
+        if (!selectedNoteIds && noteIds) selectedNoteIds = noteIds;
         if (!selectedNoteIds) return;
 
         // copy each ID to clipboard
         const ids = [];
-        for (let i = 0; i < selectedNoteIds.length; i++) {
-          const note: any = await DATA.get(['notes', selectedNoteIds[i]], { fields: ['id'] });
-          ids.push(note.id);
+        for (const noteId of selectedNoteIds) {
+          ids.push(noteId);
         }
         copy(ids.join('\n'));
       }
@@ -715,11 +716,7 @@ joplin.plugins.register({
     await joplin.views.menuItems.create('contextFolderCopyName', 'copyFolderName', MenuItemLocation.FolderContextMenu);
 
     // add commands to note list context menu
-    // API 1.4.10: currently disabled - how to get current note on which the context menu was opened (must not be the selected note)
-    // API: submenus are not shown in context menu
-    // await joplin.views.menus.create('conListMoveInList', 'Move in list', moveNoteSubMenu, MenuItemLocation.NoteListContextMenu);
-    // await joplin.views.menuItems.create('conListToggleTodoState', 'toggleTodoState', MenuItemLocation.NoteListContextMenu);
-    // await joplin.views.menuItems.create('conListCopyNoteId', 'copyNoteId', MenuItemLocation.NoteListContextMenu);
+    await joplin.views.menuItems.create('contextListToggleTodoState', 'toggleTodoState', MenuItemLocation.NoteListContextMenu);
 
     // add commands to note toolbar depending on user options
     const showToggleTodoStateToolbar = await SETTINGS.value('showToggleTodoStateToolbar');

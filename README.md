@@ -61,9 +61,9 @@ Copy the name of the notebook to the clipboard. Works from notebook context menu
 
 #### Toggle to-do state
 
-| Command Label      | Command ID        | Default Key             | Menu   | Additional UI Locations       |
-| ------------------ | ----------------- | ----------------------- | ------ | ----------------------------- |
-| Toggle to-do state | `toggleTodoState` | `CmdOrCtrl+Shift+Space` | `Note` | Note context,<br>Note toolbar |
+| Command Label      | Command ID        | Default Key             | Menu   | Additional UI Locations            |
+| ------------------ | ----------------- | ----------------------- | ------ | ---------------------------------- |
+| Toggle to-do state | `toggleTodoState` | `CmdOrCtrl+Shift+Space` | `Note` | Note list context,<br>Note toolbar |
 
 Set the status of the selected to-do to either completed or open.
 
