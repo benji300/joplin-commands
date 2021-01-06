@@ -69,59 +69,60 @@ joplin.plugins.register({
     await SETTINGS.registerSetting('showToggleTodoStateToolbar', {
       value: false,
       type: 3,
-      section: 'com.benji300.joplin.commands.settings',
+      section: 'commands.settings',
       public: true,
       label: 'Show "Toggle to-do state" on note toolbar',
-      description: 'Select whether a button to toggle the state (open/completed) of the to-do shall be shown on the note toolbar or not.'
-    });
-
-    await SETTINGS.registerSetting('quickMove1', {
-      value: "<empty>",
-      type: 2,
-      section: 'com.benji300.joplin.commands.settings',
-      public: true,
-      label: 'Enter notebook name for quick move action 1. Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar.',
-    });
-
-    await SETTINGS.registerSetting('quickMove2', {
-      value: "<empty>",
-      type: 2,
-      section: 'com.benji300.joplin.commands.settings',
-      public: true,
-      label: 'Enter notebook name for quick move action 2. Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar.',
-    });
-
-    await SETTINGS.registerSetting('quickMove3', {
-      value: "<empty>",
-      type: 2,
-      section: 'com.benji300.joplin.commands.settings',
-      public: true,
-      label: 'Enter notebook name for quick move action 3. Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar.',
-    });
-
-    await SETTINGS.registerSetting('quickMove4', {
-      value: "<empty>",
-      type: 2,
-      section: 'com.benji300.joplin.commands.settings',
-      public: true,
-      label: 'Enter notebook name for quick move action 4. Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar.',
-    });
-
-    await SETTINGS.registerSetting('quickMove5', {
-      value: "<empty>",
-      type: 2,
-      section: 'com.benji300.joplin.commands.settings',
-      public: true,
-      label: 'Enter notebook name for quick move action 5. Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar.',
+      description: 'Show a button to toggle the state (open/completed) of the to-do on the note toolbar.'
     });
 
     await SETTINGS.registerSetting('keepMovedNoteSelected', {
       value: false,
       type: SettingItemType.Bool,
-      section: 'com.benji300.joplin.commands.settings',
+      section: 'commands.settings',
       public: true,
       label: 'Keep moved note selected',
       description: 'If selected note is moved via one of the quick move actions, it will still be selected afterwards. Otherwise the next note within the current list will be selected.'
+    });
+
+    await SETTINGS.registerSetting('quickMove1', {
+      value: "<empty>",
+      type: 2,
+      section: 'commands.settings',
+      public: true,
+      label: 'Enter notebook name for quick move action 1.',
+      description: 'Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar. The same applies to the below settings.'
+    });
+
+    await SETTINGS.registerSetting('quickMove2', {
+      value: "<empty>",
+      type: 2,
+      section: 'commands.settings',
+      public: true,
+      label: 'Enter notebook name for quick move action 2.'
+    });
+
+    await SETTINGS.registerSetting('quickMove3', {
+      value: "<empty>",
+      type: 2,
+      section: 'commands.settings',
+      public: true,
+      label: 'Enter notebook name for quick move action 3.'
+    });
+
+    await SETTINGS.registerSetting('quickMove4', {
+      value: "<empty>",
+      type: 2,
+      section: 'commands.settings',
+      public: true,
+      label: 'Enter notebook name for quick move action 4.'
+    });
+
+    await SETTINGS.registerSetting('quickMove5', {
+      value: "<empty>",
+      type: 2,
+      section: 'commands.settings',
+      public: true,
+      label: 'Enter notebook name for quick move action 5.'
     });
 
     //#endregion
@@ -135,7 +136,39 @@ joplin.plugins.register({
 
     //#region REGISTER NEW COMMANDS
 
-    //#region NOTE PROPERTIES
+    //#region FOLDER COMMANDS
+
+    // Command: copyFolderName
+    // Desc: Copy the name of right-clicked folder
+    await COMMANDS.register({
+      name: 'copyFolderName',
+      label: 'Copy notebook name',
+      iconName: 'fas fa-copy',
+      execute: async (folderId: string) => {
+        let folder: any;
+
+        // get the folder and exit if not found
+        if (folderId) {
+          // called from context menu
+          folder = await DATA.get(['folders', folderId], { fields: ['title'] });
+        } else {
+          // get the parent folder name of the selected note
+          const selectedNote = await WORKSPACE.selectedNote();
+          if (!selectedNote) return;
+
+          const note: any = await DATA.get(['notes', selectedNote.id], { fields: ['parent_id'] });
+          folder = await DATA.get(['folders', note.parent_id], { fields: ['title'] });
+        }
+        if (!folder) return;
+
+        // copy name to clipboard
+        copy(folder.title);
+      }
+    });
+
+    //#endregion
+
+    //#region NOTE COMMANDS
 
     // Command: toggleTodoState
     // Desc: Set 'todo_completed' of selected note to current timestamp (closed) or zero (open)
@@ -678,7 +711,10 @@ joplin.plugins.register({
     await joplin.views.menus.create('menNoteMoveInList', 'Move in list', moveInListSubmenu, MenuItemLocation.Note);
     await joplin.views.menus.create('menNoteMoveToFolder', 'Move to notebook', moveToFolderSubmenu, MenuItemLocation.Note);
 
-    // add commands to context menu
+    // add commands to folder context menu
+    await joplin.views.menuItems.create('contextFolderCopyName', 'copyFolderName', MenuItemLocation.FolderContextMenu);
+
+    // add commands to note list context menu
     // API 1.4.10: currently disabled - how to get current note on which the context menu was opened (must not be the selected note)
     // API: submenus are not shown in context menu
     // await joplin.views.menus.create('conListMoveInList', 'Move in list', moveNoteSubMenu, MenuItemLocation.NoteListContextMenu);

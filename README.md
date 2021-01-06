@@ -11,6 +11,7 @@ Furthermore it maps also some [internal commands](#mapped-commands) to the main 
 
 - [Features](#features)
   - [New commands](#new-commands)
+    - [Copy notebook name](#copy-notebook-name)
     - [Toggle to-do state](#toggle-to-do-state)
     - [Copy Markdown link](#copy-markdown-link)
     - [Copy note ID](#copy-note-id)
@@ -49,6 +50,14 @@ This plugin provides the commands as described in the following chapters.
   - Whether the command is displayed or not can be set in the [user options](#user-options)
 - Default keyboard shortcuts can be changed in user options
   - Navigate to `Tools > Options > Keyboard Shortcuts` and search for the command label to be changed
+
+#### Copy notebook name
+
+| Command Label      | Command ID       | Default Key | Menu | Additional UI Locations |
+| ------------------ | ---------------- | ----------- | ---- | ----------------------- |
+| Copy notebook name | `copyFolderName` | -           | -    | Notebook context        |
+
+Copy the name of the notebook to the clipboard. Works from notebook context menu or for selected note via command palette.
 
 #### Toggle to-do state
 
