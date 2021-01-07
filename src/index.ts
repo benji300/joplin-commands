@@ -172,8 +172,8 @@ joplin.plugins.register({
       enabledCondition: "someNotesSelected && !inConflictFolder",
       execute: async (noteIds: string[]) => {
         // get selected note ids and return if empty
-        let selectedNoteIds = await WORKSPACE.selectedNoteIds();
-        if (!selectedNoteIds && noteIds) selectedNoteIds = noteIds;
+        let selectedNoteIds = noteIds;
+        if (!selectedNoteIds) selectedNoteIds = await WORKSPACE.selectedNoteIds();
         if (!selectedNoteIds) return;
 
         // toggle state for all todos
@@ -200,8 +200,8 @@ joplin.plugins.register({
       enabledCondition: "someNotesSelected",
       execute: async (noteIds: string[]) => {
         // get selected note ids and return if empty
-        let selectedNoteIds = await WORKSPACE.selectedNoteIds();
-        if (!selectedNoteIds && noteIds) selectedNoteIds = noteIds;
+        let selectedNoteIds = noteIds;
+        if (!selectedNoteIds) selectedNoteIds = await WORKSPACE.selectedNoteIds();
         if (!selectedNoteIds) return;
 
         // copy each name to clipboard
@@ -223,8 +223,8 @@ joplin.plugins.register({
       enabledCondition: "someNotesSelected",
       execute: async (noteIds: string[]) => {
         // get selected note ids and return if empty
-        let selectedNoteIds = await WORKSPACE.selectedNoteIds();
-        if (!selectedNoteIds && noteIds) selectedNoteIds = noteIds;
+        let selectedNoteIds = noteIds;
+        if (!selectedNoteIds) selectedNoteIds = await WORKSPACE.selectedNoteIds();
         if (!selectedNoteIds) return;
 
         // copy each ID to clipboard
@@ -243,9 +243,10 @@ joplin.plugins.register({
       label: 'Copy Markdown link',
       iconName: 'fas fa-markdown',
       enabledCondition: "someNotesSelected",
-      execute: async () => {
-        // get the selected note IDs and exit if none is currently selected
-        const selectedNoteIds = await WORKSPACE.selectedNoteIds();
+      execute: async (noteIds: string[]) => {
+        // get selected note ids and return if empty
+        let selectedNoteIds = noteIds;
+        if (!selectedNoteIds) selectedNoteIds = await WORKSPACE.selectedNoteIds();
         if (!selectedNoteIds) return;
 
         // copy each markdown link to clipboard
