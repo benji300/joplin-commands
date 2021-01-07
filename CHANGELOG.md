@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Command to copy notebook name
+- Command to copy note name
 - Commands to note list context menu ([#5](https://github.com/benji300/joplin-commands/issues/5))
 
 ## [0.2.0] - 2020-12-04

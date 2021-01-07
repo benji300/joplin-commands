@@ -204,6 +204,29 @@ joplin.plugins.register({
       }
     });
 
+    // Command: copyNoteName
+    // Desc: Copy the names of all selected notes to the clipboard
+    await COMMANDS.register({
+      name: 'copyNoteName',
+      label: 'Copy note name',
+      iconName: 'fas fa-copy',
+      enabledCondition: "someNotesSelected",
+      execute: async (noteIds: string[]) => {
+        // get selected note ids and return if empty
+        let selectedNoteIds = await WORKSPACE.selectedNoteIds();
+        if (!selectedNoteIds && noteIds) selectedNoteIds = noteIds;
+        if (!selectedNoteIds) return;
+
+        // copy each name to clipboard
+        const ids = [];
+        for (const noteId of selectedNoteIds) {
+          const note: any = await DATA.get(['notes', noteId], { fields: ['title'] });
+          if (note) ids.push(note.title);
+        }
+        copy(ids.join('\n'));
+      }
+    });
+
     // Command: copyNoteId
     // Desc: Copy the IDs of all selected notes to the clipboard
     await COMMANDS.register({
@@ -638,7 +661,19 @@ joplin.plugins.register({
     // prepare "Properties" submenu
     const propertiesSubmenu: MenuItem[] = [
       {
-        commandName: "copyNoteId"
+        commandName: "copyNoteName",
+        label: 'Copy name'
+      },
+      {
+        commandName: "copyNoteId",
+        label: 'Copy ID'
+      },
+      {
+        commandName: "copyMarkdownLink"
+      },
+      {
+        commandName: "toggleTodoState",
+        accelerator: accToggleTodoState
       },
       {
         commandName: "editAlarm"
@@ -706,8 +741,6 @@ joplin.plugins.register({
     await joplin.views.menuItems.create('menEditTextCheckbox', 'textCheckbox', MenuItemLocation.Edit, { accelerator: accTextCheckbox });
 
     // add commands to "note" menu
-    await joplin.views.menuItems.create('menNoteToggleTodoState', 'toggleTodoState', MenuItemLocation.Note, { accelerator: accToggleTodoState });
-    await joplin.views.menuItems.create('menNoteCopyMarkdownLink', 'copyMarkdownLink', MenuItemLocation.Note);
     await joplin.views.menus.create('menNoteNoteProperties', 'Properties', propertiesSubmenu, MenuItemLocation.Note);
     await joplin.views.menus.create('menNoteMoveInList', 'Move in list', moveInListSubmenu, MenuItemLocation.Note);
     await joplin.views.menus.create('menNoteMoveToFolder', 'Move to notebook', moveToFolderSubmenu, MenuItemLocation.Note);
@@ -716,12 +749,13 @@ joplin.plugins.register({
     await joplin.views.menuItems.create('contextFolderCopyName', 'copyFolderName', MenuItemLocation.FolderContextMenu);
 
     // add commands to note list context menu
+    await joplin.views.menuItems.create('contextListCopyNoteName', 'copyNoteName', MenuItemLocation.NoteListContextMenu);
     await joplin.views.menuItems.create('contextListToggleTodoState', 'toggleTodoState', MenuItemLocation.NoteListContextMenu);
 
     // add commands to note toolbar depending on user options
     const showToggleTodoStateToolbar = await SETTINGS.value('showToggleTodoStateToolbar');
     if (showToggleTodoStateToolbar) {
-      await joplin.views.toolbarButtons.create('barNoteToggleTodoState', 'toggleTodoState', ToolbarButtonLocation.NoteToolbar);
+      await joplin.views.toolbarButtons.create('toolbarNoteToggleTodoState', 'toggleTodoState', ToolbarButtonLocation.NoteToolbar);
     }
 
     //#endregion
