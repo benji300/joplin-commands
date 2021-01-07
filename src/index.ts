@@ -1,21 +1,8 @@
 import joplin from 'api';
 import { SettingItemType, MenuItem, MenuItemLocation, ToolbarButtonLocation } from 'api/types';
+import { DefaultKeys } from './helpers';
 
 const copy = require('../node_modules/copy-to-clipboard');
-
-// predefined keyboard shortcuts
-const accTextCheckbox = 'CmdOrCtrl+Shift+C';
-const accToggleTodoState = 'CmdOrCtrl+Shift+Space';
-const accMoveToTop = 'CmdOrCtrl+Alt+num8';
-const accMoveUp = 'CmdOrCtrl+num8';
-const accMoveDown = 'CmdOrCtrl+num2';
-const accMoveToBottom = 'CmdOrCtrl+Alt+num2';
-const accMoveToFolder = 'CmdOrCtrl+Shift+M';
-const accQuickMove1 = 'CmdOrCtrl+Shift+1';
-const accQuickMove2 = 'CmdOrCtrl+Shift+2';
-const accQuickMove3 = 'CmdOrCtrl+Shift+3';
-const accQuickMove4 = 'CmdOrCtrl+Shift+4';
-const accQuickMove5 = 'CmdOrCtrl+Shift+5';
 
 // helper functions
 function escapeTitleText(text: string) {
@@ -673,7 +660,7 @@ joplin.plugins.register({
       },
       {
         commandName: "toggleTodoState",
-        accelerator: accToggleTodoState
+        accelerator: DefaultKeys.ToggleTodoState
       },
       {
         commandName: "editAlarm"
@@ -690,19 +677,19 @@ joplin.plugins.register({
     const moveInListSubmenu: MenuItem[] = [
       {
         commandName: "moveToTop",
-        accelerator: accMoveToTop
+        accelerator: DefaultKeys.MoveToTop
       },
       {
         commandName: "moveUp",
-        accelerator: accMoveUp
+        accelerator: DefaultKeys.MoveUp
       },
       {
         commandName: "moveDown",
-        accelerator: accMoveDown
+        accelerator: DefaultKeys.MoveDown
       },
       {
         commandName: "moveToBottom",
-        accelerator: accMoveToBottom
+        accelerator: DefaultKeys.MoveToBottom
       },
       {
         commandName: "touchNote"
@@ -713,32 +700,32 @@ joplin.plugins.register({
     const moveToFolderSubmenu: MenuItem[] = [
       {
         commandName: "quickMove1",
-        accelerator: accQuickMove1
+        accelerator: DefaultKeys.QuickMove1
       },
       {
         commandName: "quickMove2",
-        accelerator: accQuickMove2
+        accelerator: DefaultKeys.QuickMove2
       },
       {
         commandName: "quickMove3",
-        accelerator: accQuickMove3
+        accelerator: DefaultKeys.QuickMove3
       },
       {
         commandName: "quickMove4",
-        accelerator: accQuickMove4
+        accelerator: DefaultKeys.QuickMove4
       },
       {
         commandName: "quickMove5",
-        accelerator: accQuickMove5
+        accelerator: DefaultKeys.QuickMove5
       },
       {
         commandName: "moveToFolder",
-        accelerator: accMoveToFolder
+        accelerator: DefaultKeys.MoveToFolder
       }
     ];
 
     // add commands to "edit" menu
-    await joplin.views.menuItems.create('menEditTextCheckbox', 'textCheckbox', MenuItemLocation.Edit, { accelerator: accTextCheckbox });
+    await joplin.views.menuItems.create('menEditTextCheckbox', 'textCheckbox', MenuItemLocation.Edit, { accelerator: DefaultKeys.TextCheckbox });
 
     // add commands to "note" menu
     await joplin.views.menus.create('menNoteNoteProperties', 'Properties', propertiesSubmenu, MenuItemLocation.Note);
