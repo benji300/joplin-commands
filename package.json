@@ -20,6 +20,9 @@
   "keywords": [
     "joplin-plugin"
   ],
+  "browser": {
+    "child_process": false
+  },
   "devDependencies": {
     "@types/node": "^14.0.14",
     "chalk": "^4.1.0",

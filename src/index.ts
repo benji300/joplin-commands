@@ -122,6 +122,20 @@ joplin.plugins.register({
       return -1;
     }
 
+    function openUrl(url: string) {
+      if (!url) return;
+
+      // try to open the URL in the system's default browser
+      try {
+        const { exec } = require('child_process');
+        var start = (process.platform == 'darwin' ? 'open' : process.platform == 'win32' ? 'start' : 'xdg-open');
+        const subprocess = exec(start + ' ' + url);
+        subprocess.unref();
+      } catch (error) {
+        DIALOGS.showMessageBox(`Something went wrong... could not open requested URL.`);
+      }
+    }
+
     //#endregion
 
     //#region COMMANDS
@@ -305,18 +319,8 @@ joplin.plugins.register({
         const selectedNote = await WORKSPACE.selectedNote();
         if (!selectedNote) return;
 
-        // exit if 'source_url' is not set for note
-        if (!selectedNote.source_url) return;
-
         // try to open the URL in the system's default browser
-        try {
-          const { exec } = require('child_process');
-          var start = (process.platform == 'darwin' ? 'open' : process.platform == 'win32' ? 'start' : 'xdg-open');
-          const subprocess = exec(start + ' ' + selectedNote.source_url);
-          subprocess.unref();
-        } catch (error) {
-          DIALOGS.showMessageBox(`Something went wrong... could not open requested URL.`);
-        }
+        openUrl(selectedNote.source_url);
       }
     });
 
