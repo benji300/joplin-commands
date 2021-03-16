@@ -1,6 +1,6 @@
 import joplin from 'api';
-import { SettingItemType, MenuItem, MenuItemLocation, ToolbarButtonLocation } from 'api/types';
-import { DefaultKeys } from './helpers';
+import { MenuItem, MenuItemLocation } from 'api/types';
+import { Settings, DefaultKeys } from './settings';
 
 const copy = require('../node_modules/copy-to-clipboard');
 
@@ -9,75 +9,13 @@ joplin.plugins.register({
     const COMMANDS = joplin.commands;
     const DATA = joplin.data;
     const DIALOGS = joplin.views.dialogs;
-    const SETTINGS = joplin.settings;
+    // const SETTINGS = joplin.settings;
     const WORKSPACE = joplin.workspace;
-
-    //#region REGISTER USER OPTIONS
-
-    await SETTINGS.registerSection('commands.settings', {
-      label: 'Command Collection',
-      iconName: 'fas fa-terminal',
-      description: 'Changes are only applied after a restart.'
-    });
-
-    await SETTINGS.registerSetting('keepMovedNoteSelected', {
-      value: false,
-      type: SettingItemType.Bool,
-      section: 'commands.settings',
-      public: true,
-      label: 'Keep moved note selected',
-      description: 'If selected note is moved via one of the quick move actions, it will still be selected afterwards. Otherwise the next note within the current list will be selected.'
-    });
-
-    await SETTINGS.registerSetting('quickMove1', {
-      value: '<empty>',
-      type: 2,
-      section: 'commands.settings',
-      public: true,
-      label: 'Enter notebook name for quick move action 1.',
-      description: 'Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar. The same applies to the below settings.'
-    });
-
-    await SETTINGS.registerSetting('quickMove2', {
-      value: '<empty>',
-      type: 2,
-      section: 'commands.settings',
-      public: true,
-      label: 'Enter notebook name for quick move action 2.'
-    });
-
-    await SETTINGS.registerSetting('quickMove3', {
-      value: '<empty>',
-      type: 2,
-      section: 'commands.settings',
-      public: true,
-      label: 'Enter notebook name for quick move action 3.'
-    });
-
-    await SETTINGS.registerSetting('quickMove4', {
-      value: '<empty>',
-      type: 2,
-      section: 'commands.settings',
-      public: true,
-      label: 'Enter notebook name for quick move action 4.'
-    });
-
-    await SETTINGS.registerSetting('quickMove5', {
-      value: '<empty>',
-      type: 2,
-      section: 'commands.settings',
-      public: true,
-      label: 'Enter notebook name for quick move action 5.'
-    });
-
-    //#endregion
-
-    //#region INIT LOCAL VARIABLES
-
-    // prepare dialog/view/panel objects
+    // settings
+    const settings: Settings = new Settings();
+    await settings.register();
+    // dialog
     const dialogEditURL = await DIALOGS.create('commands.dialog');
-
-    //#endregion
 
     //#region HELPERS
 
@@ -127,14 +65,12 @@ joplin.plugins.register({
       }
     }
 
-    async function quickMoveToFolder(quickMoveSetting: string) {
+    async function quickMoveToFolder(quickMoveFolder: string) {
+      if (quickMoveFolder == '<empty>' || quickMoveFolder == '') return;
+
       // get the selected note and exit if none is currently selected
       const selectedNote: any = await WORKSPACE.selectedNote();
       if (!selectedNote) return;
-
-      // get the quick move folder from user settings and exit if empty
-      const quickMoveFolder: string = await SETTINGS.value(quickMoveSetting);
-      if (quickMoveFolder == '<empty>' || quickMoveFolder == '') return;
 
       // check if quick move folder exist and exit if not
       const folders: any = await DATA.get(['folders'], { fields: ['id', 'title'] });
@@ -145,8 +81,7 @@ joplin.plugins.register({
       await DATA.put(['notes', selectedNote.id], null, { parent_id: folder.id });
 
       // keep moved note selected if enabled
-      const keepMovedNoteSelected: boolean = await SETTINGS.value('keepMovedNoteSelected');
-      if (keepMovedNoteSelected) {
+      if (settings.keepMovedNoteSelected) {
         COMMANDS.execute('openNote', selectedNote.id);
       }
     }
@@ -373,11 +308,11 @@ joplin.plugins.register({
         if (!selectedNote) return;
 
         // get the note sort order and exit if not custom order
-        const sortOrder: string = await SETTINGS.globalValue('notes.sortOrder.field');
+        const sortOrder: string = await settings.notesSortOrder;
         if (sortOrder != 'order') return;
 
         // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
-        const uncompletedTodosOnTop: any = await SETTINGS.globalValue('uncompletedTodosOnTop');
+        const uncompletedTodosOnTop: boolean = await settings.uncompletedTodosOnTop;
         if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
 
         // set 'order' to current timestamp value
@@ -398,11 +333,11 @@ joplin.plugins.register({
         if (!selectedNote) return;
 
         // get the note sort order and exit if not custom order
-        const sortOrder: string = await SETTINGS.globalValue('notes.sortOrder.field');
+        const sortOrder: string = await settings.notesSortOrder;
         if (sortOrder != 'order') return;
 
         // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
-        const uncompletedTodosOnTop: any = await SETTINGS.globalValue('uncompletedTodosOnTop');
+        const uncompletedTodosOnTop: boolean = await settings.uncompletedTodosOnTop;
         if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
 
         // get all notes from folder sorted by their 'order' value and exit if empty
@@ -459,11 +394,11 @@ joplin.plugins.register({
         if (!selectedNote) return;
 
         // get the note sort order and exit if not custom order
-        const sortOrder: string = await SETTINGS.globalValue('notes.sortOrder.field');
+        const sortOrder: string = await settings.notesSortOrder;
         if (sortOrder != 'order') return;
 
         // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
-        const uncompletedTodosOnTop: any = await SETTINGS.globalValue('uncompletedTodosOnTop');
+        const uncompletedTodosOnTop: boolean = await settings.uncompletedTodosOnTop;
         if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
 
         // get all notes from folder sorted by their 'order' value and exit if empty
@@ -520,11 +455,11 @@ joplin.plugins.register({
         if (!selectedNote) return;
 
         // get the note sort order and exit if not custom order
-        const sortOrder: string = await SETTINGS.globalValue('notes.sortOrder.field');
+        const sortOrder: string = await settings.notesSortOrder;
         if (sortOrder != 'order') return;
 
         // exit if selected note is a completed to-do and completed ones shall be shown at the bottom (uncompletedTodosOnTop)
-        const uncompletedTodosOnTop: any = await SETTINGS.globalValue('uncompletedTodosOnTop');
+        const uncompletedTodosOnTop: boolean = await settings.uncompletedTodosOnTop;
         if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
 
         // get all notes from folder sorted by their 'order' value and exit if empty
@@ -559,67 +494,106 @@ joplin.plugins.register({
     });
 
     // Command: quickMove1
-    // Desc: Moves the selected note directly to the specified folder
-    const lblQuickMove1: string = await SETTINGS.value('quickMove1');
+    // Desc: Move the selected note(s) directly to the specified folder
+    const lblQuickMove1: string = settings.quickMove1;
     await COMMANDS.register({
       name: 'quickMove1',
       label: `Move to: ${lblQuickMove1}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
       execute: async () => {
-        quickMoveToFolder('quickMove1');
+        quickMoveToFolder(settings.quickMove1);
       }
     });
 
     // Command: quickMove2
-    // Desc: Moves the selected note directly to the specified folder
-    const lblQuickMove2: string = await SETTINGS.value('quickMove2');
+    // Desc: Move the selected note(s) directly to the specified folder
+    const lblQuickMove2: string = settings.quickMove2;
     await COMMANDS.register({
       name: 'quickMove2',
       label: `Move to: ${lblQuickMove2}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
       execute: async () => {
-        quickMoveToFolder('quickMove2');
+        quickMoveToFolder(settings.quickMove2);
       }
     });
 
     // Command: quickMove3
-    // Desc: Moves the selected note directly to the specified folder
-    const lblQuickMove3: string = await SETTINGS.value('quickMove3');
+    // Desc: Move the selected note(s) directly to the specified folder
+    const lblQuickMove3: string = settings.quickMove3;
     await COMMANDS.register({
       name: 'quickMove3',
       label: `Move to: ${lblQuickMove3}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
       execute: async () => {
-        quickMoveToFolder('quickMove3');
+        quickMoveToFolder(settings.quickMove3);
       }
     });
 
     // Command: quickMove4
-    // Desc: Moves the selected note directly to the specified folder
-    const lblQuickMove4: string = await SETTINGS.value('quickMove4');
+    // Desc: Move the selected note(s) directly to the specified folder
+    const lblQuickMove4: string = settings.quickMove4;
     await COMMANDS.register({
       name: 'quickMove4',
       label: `Move to: ${lblQuickMove4}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
       execute: async () => {
-        quickMoveToFolder('quickMove4');
+        quickMoveToFolder(settings.quickMove4);
       }
     });
 
     // Command: quickMove5
-    // Desc: Moves the selected note directly to the specified folder
-    const lblQuickMove5: string = await SETTINGS.value('quickMove5');
+    // Desc: Move the selected note(s) directly to the specified folder
+    const lblQuickMove5: string = settings.quickMove5;
     await COMMANDS.register({
       name: 'quickMove5',
       label: `Move to: ${lblQuickMove5}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
       execute: async () => {
-        quickMoveToFolder('quickMove5');
+        quickMoveToFolder(settings.quickMove5);
+      }
+    });
+
+    // Command: quickMove6
+    // Desc: Move the selected note(s) directly to the specified folder
+    const lblQuickMove6: string = settings.quickMove6;
+    await COMMANDS.register({
+      name: 'quickMove6',
+      label: `Move to: ${lblQuickMove6}`,
+      iconName: 'fas fa-shipping-fast',
+      enabledCondition: 'oneNoteSelected',
+      execute: async () => {
+        quickMoveToFolder(settings.quickMove6);
+      }
+    });
+
+    // Command: quickMove7
+    // Desc: Move the selected note(s) directly to the specified folder
+    const lblQuickMove7: string = settings.quickMove7;
+    await COMMANDS.register({
+      name: 'quickMove7',
+      label: `Move to: ${lblQuickMove7}`,
+      iconName: 'fas fa-shipping-fast',
+      enabledCondition: 'oneNoteSelected',
+      execute: async () => {
+        quickMoveToFolder(settings.quickMove7);
+      }
+    });
+
+    // Command: quickMove8
+    // Desc: Move the selected note(s) directly to the specified folder
+    const lblQuickMove8: string = settings.quickMove8;
+    await COMMANDS.register({
+      name: 'quickMove8',
+      label: `Move to: ${lblQuickMove8}`,
+      iconName: 'fas fa-shipping-fast',
+      enabledCondition: 'oneNoteSelected',
+      execute: async () => {
+        quickMoveToFolder(settings.quickMove8);
       }
     });
 
@@ -697,6 +671,18 @@ joplin.plugins.register({
         accelerator: DefaultKeys.QuickMove5
       },
       {
+        commandName: 'quickMove6',
+        accelerator: DefaultKeys.QuickMove6
+      },
+      {
+        commandName: 'quickMove7',
+        accelerator: DefaultKeys.QuickMove7
+      },
+      {
+        commandName: 'quickMove8',
+        accelerator: DefaultKeys.QuickMove8
+      },
+      {
         commandName: 'moveToFolder',
         accelerator: DefaultKeys.MoveToFolder
       }
@@ -711,11 +697,15 @@ joplin.plugins.register({
     await joplin.views.menus.create('menNoteMoveToFolder', 'Move to notebook', moveToFolderSubmenu, MenuItemLocation.Note);
 
     // add commands to folder context menu
-    await joplin.views.menuItems.create('contextFolderCopyName', 'copyFolderName', MenuItemLocation.FolderContextMenu);
+    await joplin.views.menuItems.create('folderContextCopyFolderName', 'copyFolderName', MenuItemLocation.FolderContextMenu);
 
-    // add commands to note list context menu
-    await joplin.views.menuItems.create('contextListCopyNoteName', 'copyNoteName', MenuItemLocation.NoteListContextMenu);
-    await joplin.views.menuItems.create('contextListToggleTodoState', 'toggleTodoState', MenuItemLocation.NoteListContextMenu);
+    // add commands to notes context menu
+    await joplin.views.menuItems.create('notesContextCopyNoteName', 'copyNoteName', MenuItemLocation.NoteListContextMenu);
+    await joplin.views.menuItems.create('notesContextToggleTodoState', 'toggleTodoState', MenuItemLocation.NoteListContextMenu);
+
+    // add commands to editor context menu
+    await joplin.views.menuItems.create('editorContextCopyNoteName', 'copyNoteName', MenuItemLocation.EditorContextMenu);
+    await joplin.views.menuItems.create('editorContextToggleTodoState', 'toggleTodoState', MenuItemLocation.EditorContextMenu);
 
     //#endregion
 
