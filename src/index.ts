@@ -4,39 +4,6 @@ import { DefaultKeys } from './helpers';
 
 const copy = require('../node_modules/copy-to-clipboard');
 
-// helper functions
-function escapeTitleText(text: string) {
-  return text.replace(/(\[|\])/g, '\\$1');
-}
-
-function getItemWithAttr(array: any, attr: any, value: any): any {
-  for (var i = 0; i < array.length; i += 1) {
-    if (array[i][attr] === value) {
-      return array[i];
-    }
-  }
-  return -1;
-}
-
-function getAllWithAttr(array: any, attr: any, value: any): any {
-  const notes: any = [];
-  for (var i = 0; i < array.length; i += 1) {
-    if (array[i][attr] === value) {
-      notes.push(array[i]);
-    }
-  }
-  return notes;
-}
-
-function getIndexWithAttr(array: any, attr: any, value: any): any {
-  for (var i = 0; i < array.length; i += 1) {
-    if (array[i][attr] === value) {
-      return i;
-    }
-  }
-  return -1;
-}
-
 joplin.plugins.register({
   onStart: async function () {
     const COMMANDS = joplin.commands;
@@ -121,13 +88,43 @@ joplin.plugins.register({
 
     //#endregion
 
-    //#region COMMAND HELPER FUNCTIONS
+    //#region HELPERS
+
+    function escapeTitleText(text: string) {
+      return text.replace(/(\[|\])/g, '\\$1');
+    }
+
+    function getItemWithAttr(array: any, attr: any, value: any): any {
+      for (var i = 0; i < array.length; i += 1) {
+        if (array[i][attr] === value) {
+          return array[i];
+        }
+      }
+      return -1;
+    }
+
+    function getAllWithAttr(array: any, attr: any, value: any): any {
+      const notes: any = [];
+      for (var i = 0; i < array.length; i += 1) {
+        if (array[i][attr] === value) {
+          notes.push(array[i]);
+        }
+      }
+      return notes;
+    }
+
+    function getIndexWithAttr(array: any, attr: any, value: any): any {
+      for (var i = 0; i < array.length; i += 1) {
+        if (array[i][attr] === value) {
+          return i;
+        }
+      }
+      return -1;
+    }
 
     //#endregion
 
-    //#region REGISTER NEW COMMANDS
-
-    //#region FOLDER COMMANDS
+    //#region COMMANDS
 
     // Command: copyFolderName
     // Desc: Copy the name of right-clicked folder
@@ -158,10 +155,6 @@ joplin.plugins.register({
         }
       }
     });
-
-    //#endregion
-
-    //#region NOTE COMMANDS
 
     // Command: toggleTodoState
     // Desc: Set 'todo_completed' of selected note to current timestamp (closed) or zero (open)
@@ -343,10 +336,6 @@ joplin.plugins.register({
         await DATA.put(['notes', selectedNote.id], null, { updated_time: Date.now() });
       },
     });
-
-    //#endregion
-
-    //#region MOVE NOTES IN LIST
 
     // Command: moveToTop
     // Desc: Moves the selected note to the top of the list
@@ -547,10 +536,6 @@ joplin.plugins.register({
       }
     });
 
-    //#endregion
-
-    //#region MOVE NOTES TO
-
     async function quickMoveToFolder(quickMoveSetting: string) {
       // get the selected note and exit if none is currently selected
       const selectedNote: any = await WORKSPACE.selectedNote();
@@ -639,12 +624,6 @@ joplin.plugins.register({
         quickMoveToFolder('quickMove5');
       }
     });
-
-    //#endregion
-
-    //#endregion
-
-    //#region MAP COMMANDS TO MENUS
 
     // prepare "Properties" submenu
     const propertiesSubmenu: MenuItem[] = [
@@ -748,5 +727,9 @@ joplin.plugins.register({
 
     //#endregion
 
-  },
+    //#region EVENTS
+
+    //#endregion
+
+  }
 });

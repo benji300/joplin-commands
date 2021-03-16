@@ -1,7 +1,7 @@
 {
   "name": "joplin-plugin-benji300-commands",
   "version": "1.0.0",
-  "description": "Plugin for Joplin which provides a collection of commands to improve and speed up your daily work.",
+  "description": "Collection of commands to improve and speed up your daily work with Joplin.",
   "author": "Benji300",
   "homepage": "https://github.com/benji300/joplin-commands",
   "bugs": {
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/benji300/joplin-commands.git"
   },
   "scripts": {
-    "dist": "webpack",
+    "dist": "webpack --joplin-plugin-config buildMain && webpack --joplin-plugin-config buildExtraScripts && webpack --joplin-plugin-config createArchive",
     "prepare": "npm run dist",
     "update": "npm install -g generator-joplin && yo joplin --update"
   },
@@ -31,7 +31,8 @@
     "ts-loader": "^7.0.5",
     "typescript": "^3.9.3",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "yargs": "^16.2.0"
   },
   "dependencies": {
     "copy-to-clipboard": "^3.3.1"

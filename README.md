@@ -1,11 +1,11 @@
 # Joplin Command Collection
 
-Joplin Command Collection is a plugin to extend the UX of [Joplin's](https://joplinapp.org/) desktop application.
+Command Collection is a plugin to extend the UX of [Joplin's](https://joplinapp.org/) desktop application.
 
 It provides a collection of [new commands](#new-commands) to improve and speed up your daily work with the keyboard in Joplin.
 Furthermore it maps also some [internal commands](#mapped-commands) to the main menu to allow to assign keyboard shortcuts to them.
 
-> :warning: **CAUTION** - Requires Joplin **v1.5.7** or newer
+> :warning: **CAUTION** - Requires Joplin **v1.6.7** or newer
 
 ## Table of contents
 
@@ -24,7 +24,6 @@ Furthermore it maps also some [internal commands](#mapped-commands) to the main 
   - [Mapped commands](#mapped-commands)
   - [User options](#user-options)
 - [Installation](#installation)
-- [Uninstallation](#uninstallation)
 - [Feedback](#feedback)
 - [Support](#support)
 - [Development](#development)
@@ -166,19 +165,23 @@ This plugin adds provides user options which can be changed via `Tools > Options
 
 ## Installation
 
-- Download the latest released JPL package (`joplin-plugin-benji300-commands.jpl`) from [here](https://github.com/benji300/joplin-commands/releases)
-- Open Joplin
-- Navigate to `Tools > Options > Plugins`
+### Automatic (Joplin v1.6.4 and newer)
+
+- Currently not supported
+
+### Manual
+
+- Download the latest released JPL package (`*.jpl`) from [here](https://github.com/benji300/joplin-commands/releases)
+- Open Joplin and navigate to `Tools > Options > Plugins`
 - Press `Install plugin` and select the previously downloaded `jpl` file
 - Confirm selection
 - Restart Joplin to enable the plugin
 
-## Uninstallation
+### Uninstall
 
-- Open Joplin
-- Navigate to `Tools > Options > Plugins`
+- Open Joplin and navigate to `Tools > Options > Plugins`
 - Search for the `Command Collection` plugin
-- Press `Delete` to remove the plugin from the user profile directory
+- Press `Delete` to remove the plugin completely
   - Alternatively you can also disable the plugin by clicking on the toggle button
 - Restart Joplin
 
@@ -187,25 +190,25 @@ This plugin adds provides user options which can be changed via `Tools > Options
 - :question: Need help?
   - Ask a question on the [Joplin Forum](https://discourse.joplinapp.org/c/plugins/18) (TODO: Paste link to thread)
 - :bulb: An idea to improve or enhance the plugin?
-  - [Request a new feature](https://github.com/benji300/joplin-commands/issues) or upvote [popular feature requests](https://github.com/benji300/joplin-commands/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement+sort%3Areactions-%2B1-desc+)
+  - Start a new discussion on the [Forum](https://discourse.joplinapp.org/c/plugins/18) or upvote [popular feature requests](https://github.com/benji300/joplin-commands/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement+sort%3Areactions-%2B1-desc+)
 - :bug: Found a bug?
-  - File an issue on [GitHub](https://github.com/benji300/joplin-commands/issues)
+  - Check the [Forum](https://discourse.joplinapp.org/c/plugins/18) if anyone else already reported the same issue. Otherwise report it by yourself.
 
 ## Support
 
-You like this plugin as much as I do and it helps you in your daily work with Joplin?
+You like this plugin as much as I do and it improves your daily work with Joplin?
 
-Then I would be very happy if you would buy me a beer via [PayPal](https://www.paypal.com/donate?hosted_button_id=6FHDGK3PTNU22) :wink::beer:
+Then I would be very happy if you buy me a beer via [PayPal](https://www.paypal.com/donate?hosted_button_id=6FHDGK3PTNU22) :wink::beer:
 
 ## Development
 
 ### Building the plugin
 
-If you want to build the plugin by your own simply run:
+If you want to build the plugin by your own simply run `npm run dist`.
 
-```
-npm run dist
-```
+### Updating the plugin framework
+
+To update the plugin framework, run `npm run update`.
 
 ## Changes
 
