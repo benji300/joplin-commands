@@ -85,9 +85,9 @@ Also the command is available via the command palette now.
 
 #### Toggle to-do state
 
-| Command Label      | Command ID        | Default Key             | Menu contexts                                       |
-| ------------------ | ----------------- | ----------------------- | --------------------------------------------------- |
-| Toggle to-do state | `toggleTodoState` | `CmdOrCtrl+Shift+Space` | `Note>Properties`, `NoteListContext`, `NoteToolbar` |
+| Command Label      | Command ID        | Default Key             | Menu contexts                        |
+| ------------------ | ----------------- | ----------------------- | ------------------------------------ |
+| Toggle to-do state | `toggleTodoState` | `CmdOrCtrl+Shift+Space` | `Note>Properties`, `NoteListContext` |
 
 Toggle the state of the selected to-do(s).
 

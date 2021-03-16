@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Command to copy note name
 - Commands to note list context menu ([#5](https://github.com/benji300/joplin-commands/issues/5))
 
+### Removed
+
+- User Option `showToggleTodoStateToolbar`
+
 ## [0.2.0] - 2020-12-04
 
 ### Added
