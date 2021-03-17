@@ -1,6 +1,7 @@
 import joplin from 'api';
 import { MenuItem, MenuItemLocation } from 'api/types';
 import { Settings, DefaultKeys } from './settings';
+import { TextInputDialog } from './dialogs';
 
 const copy = require('../node_modules/copy-to-clipboard');
 
@@ -8,14 +9,13 @@ joplin.plugins.register({
   onStart: async function () {
     const COMMANDS = joplin.commands;
     const DATA = joplin.data;
-    const DIALOGS = joplin.views.dialogs;
-    // const SETTINGS = joplin.settings;
     const WORKSPACE = joplin.workspace;
     // settings
     const settings: Settings = new Settings();
     await settings.register();
-    // dialog
-    const dialogEditURL = await DIALOGS.create('commands.dialog');
+    // dialogs
+    const dialogEditURL: TextInputDialog = new TextInputDialog('Set URL', 'Enter URL (source_url)...');
+    await dialogEditURL.register();
 
     //#region HELPERS
 
@@ -61,7 +61,7 @@ joplin.plugins.register({
         const subprocess = exec(start + ' ' + url);
         subprocess.unref();
       } catch (error) {
-        DIALOGS.showMessageBox(`Something went wrong... could not open requested URL.`);
+        joplin.views.dialogs.showMessageBox(`Something went wrong... could not open requested URL.`);
       }
     }
 
@@ -85,7 +85,6 @@ joplin.plugins.register({
         COMMANDS.execute('openNote', selectedNote.id);
       }
     }
-
 
     //#endregion
 
@@ -235,26 +234,10 @@ joplin.plugins.register({
         const selectedNote: any = await WORKSPACE.selectedNote();
         if (!selectedNote) return;
 
-        // prepare and open dialog
-        await DIALOGS.setHtml(dialogEditURL, `
-          <div class="joplin-commands-container">
-            <form name="urlForm" style="display:grid;">
-              <label for="url" style="padding:5px 2px;">Set URL</label>
-              <input type="text" id="url" name="url" style="padding:2px;" placeholder="Enter URL..." value="${selectedNote.source_url}">
-            </form>
-          </div>
-        `);
-        const result: any = await DIALOGS.open(dialogEditURL);
-
-        // get return and new URL value
-        if (result.id == 'ok') {
-          if (result.formData != null) {
-            const newUrl: string = result.formData.urlForm.url;
-            const dialogRes: number = await DIALOGS.showMessageBox(`Set URL to: ${newUrl}`);
-            if (dialogRes == 0) {
-              await DATA.put(['notes', selectedNote.id], null, { source_url: newUrl });
-            }
-          }
+        // open dialog and handle result
+        const newUrl: string = await dialogEditURL.open(selectedNote.source_url);
+        if (newUrl) {
+          await DATA.put(['notes', selectedNote.id], null, { source_url: newUrl });
         }
       }
     });

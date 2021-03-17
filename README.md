@@ -5,7 +5,7 @@ Command Collection is a plugin to extend the UX of [Joplin's](https://joplinapp.
 It provides a collection of [new commands](#new-commands) to improve and speed up your daily work with the keyboard in Joplin.
 Furthermore it maps also some [internal commands](#mapped-commands) to the main menu to allow to assign keyboard shortcuts to them.
 
-> :warning: **CAUTION** - Requires Joplin **v1.6.7** or newer
+> :warning: **CAUTION** - Requires Joplin **v1.6.5** or newer
 
 ## Table of contents
 
@@ -22,8 +22,8 @@ Furthermore it maps also some [internal commands](#mapped-commands) to the main 
     - [Move note in list](#Move-note-in-list)
     - [Quick move note](#quick-move-note)
   - [Mapped commands](#mapped-commands)
-  - [User options](#user-options)
 - [Installation](#installation)
+- [User options](#user-options)
 - [Feedback](#feedback)
 - [Support](#support)
 - [Development](#development)
@@ -157,12 +157,6 @@ The following internal commands are mapped to main menu entries. This allows to 
 | Set alarm        | `editAlarm`    | -                   | `Note>Properties`       |
 | Move to notebook | `moveToFolder` | `CmdOrCtrl+Shift+M` | `Note>Move to notebook` |
 
-### User options
-
-This plugin adds provides user options which can be changed via `Tools > Options > Command Collection`.
-
-> **NOTE** - Changes to the user options are only applied after a restart of the app
-
 ## Installation
 
 ### Automatic (Joplin v1.6.4 and newer)
@@ -184,6 +178,12 @@ This plugin adds provides user options which can be changed via `Tools > Options
 - Press `Delete` to remove the plugin completely
   - Alternatively you can also disable the plugin by clicking on the toggle button
 - Restart Joplin
+
+## User options
+
+This plugin adds provides user options which can be changed via `Tools > Options > Command Collection`.
+
+> **NOTE** - Changes to the quick move actions are only applied after a restart of the app.
 
 ## Feedback
 
