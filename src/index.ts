@@ -2,6 +2,7 @@ import joplin from 'api';
 import { MenuItem, MenuItemLocation } from 'api/types';
 import { Settings, DefaultKeys } from './settings';
 import { TextInputDialog } from './dialogs';
+import { Url } from './url';
 
 const copy = require('../node_modules/copy-to-clipboard');
 
@@ -49,20 +50,6 @@ joplin.plugins.register({
         }
       }
       return -1;
-    }
-
-    function openUrl(url: string) {
-      if (!url) return;
-
-      // try to open the URL in the system's default browser
-      try {
-        const { exec } = require('child_process');
-        var start = (process.platform == 'darwin' ? 'open' : process.platform == 'win32' ? 'start' : 'xdg-open');
-        const subprocess = exec(start + ' ' + url);
-        subprocess.unref();
-      } catch (error) {
-        joplin.views.dialogs.showMessageBox(`Something went wrong... could not open requested URL.`);
-      }
     }
 
     async function quickMoveToFolder(quickMoveFolder: string) {
@@ -255,7 +242,7 @@ joplin.plugins.register({
         if (!selectedNote) return;
 
         // try to open the URL in the system's default browser
-        openUrl(selectedNote.source_url);
+        Url.open(selectedNote.source_url);
       }
     });
 
