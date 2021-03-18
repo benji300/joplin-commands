@@ -25,15 +25,6 @@ joplin.plugins.register({
       return text.replace(/(\[|\])/g, '\\$1');
     }
 
-    // function getItemWithAttr(array: any, attr: any, value: any): any {
-    //   for (var i = 0; i < array.length; i += 1) {
-    //     if (array[i][attr] === value) {
-    //       return array[i];
-    //     }
-    //   }
-    //   return -1;
-    // }
-
     function getAllWithAttr(array: any, attr: any, value: any): any {
       const notes: any = [];
       for (var i = 0; i < array.length; i += 1) {
@@ -58,12 +49,12 @@ joplin.plugins.register({
 
       if (folderId) {
         // called from context menu
-        folder = await DA.getFolderWithId(folderId, ['id', 'title']);
+        folder = await DA.getFolderWithId(folderId);
       } else {
         // get the parent folder name of the selected note
         const selectedNote: any = await WORKSPACE.selectedNote();
         if (selectedNote) {
-          folder = await DA.getFolderWithId(selectedNote.parent_id, ['id', 'title']);
+          folder = await DA.getFolderWithId(selectedNote.parent_id);
         }
       }
       return folder;
@@ -78,7 +69,7 @@ joplin.plugins.register({
       if (!selectedNoteIds) return;
 
       // check if quick move folder exist and exit if not
-      const folder = await DA.getFolderWithTitle(quickMoveFolder, ['id', 'title']);
+      const folder = await DA.getFolderWithTitle(quickMoveFolder);
       if (!folder) return;
 
       // move each selected note to new folder
@@ -141,7 +132,7 @@ joplin.plugins.register({
 
         // toggle state for all todos
         for (const noteId of selectedNoteIds) {
-          const note: any = await DATA.get(['notes', noteId], { fields: ['id', 'is_todo', 'todo_completed'] });
+          const note: any = await DA.getNoteWithId(noteId);
 
           if (note && note.is_todo) {
             if (note.todo_completed) {
@@ -170,7 +161,7 @@ joplin.plugins.register({
         // copy each name to clipboard
         const ids = [];
         for (const noteId of selectedNoteIds) {
-          const note: any = await DATA.get(['notes', noteId], { fields: ['title'] });
+          const note: any = await DA.getNoteWithId(noteId);
           if (note) ids.push(note.title);
         }
         copy(ids.join('\n'));
@@ -208,15 +199,14 @@ joplin.plugins.register({
       enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
         // get selected note ids and return if empty
-        let selectedNoteIds = noteIds;
+        let selectedNoteIds: string[] = noteIds;
         if (!selectedNoteIds) selectedNoteIds = await WORKSPACE.selectedNoteIds();
         if (!selectedNoteIds) return;
 
         // copy each markdown link to clipboard
         const links = [];
-        for (let i = 0; i < selectedNoteIds.length; i++) {
-          const note: any = await DATA.get(['notes', selectedNoteIds[i]], { fields: ['id', 'title'] });
-          // TODO extract to helper function
+        for (const noteId of selectedNoteIds) {
+          const note: any = await DA.getNoteWithId(noteId);
           const mdLink = [];
           mdLink.push('[');
           mdLink.push(escapeTitleText(note.title));
@@ -330,6 +320,7 @@ joplin.plugins.register({
         if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
 
         // get all notes from folder sorted by their 'order' value and exit if empty
+        // TODO DA.getNotesOfFolder(folderId, orderby, orderdir);
         var notes: any = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'DESC' });
         if (!notes.items.length) return;
 
@@ -344,6 +335,7 @@ joplin.plugins.register({
         }
 
         // get all notes with same order value as previous note
+        // TODO DA
         const previousNote: any = await DATA.get(['notes', notes.items[index - 1].id], { fields: ['id', 'order'] });
         var previousOrder: number = previousNote.order;
         const notesWithSameOrder: any = getAllWithAttr(notes.items, 'order', previousOrder);
@@ -360,6 +352,7 @@ joplin.plugins.register({
           await DATA.put(['notes', selectedNote.id], null, { order: previousOrder + 10 });
         } else {
           // put selected note in between previous in pre-previous note
+          // TODO DA
           const prevprevNote: any = await DATA.get(['notes', notes.items[index - 2].id], { fields: ['id', 'order'] });
           const newOrder: number = ((prevprevNote.order - previousNote.order) / 2);
           await DATA.put(['notes', selectedNote.id], null, { order: previousNote.order + newOrder });
@@ -391,6 +384,7 @@ joplin.plugins.register({
         if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
 
         // get all notes from folder sorted by their 'order' value and exit if empty
+        // TODO DA
         var notes: any = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' });
         if (!notes.items.length) return;
 
@@ -405,6 +399,7 @@ joplin.plugins.register({
         }
 
         // get all notes with same order value as subsequent note
+        // TODO DA
         const subsequentNote: any = await DATA.get(['notes', notes.items[index - 1].id], { fields: ['id', 'order'] });
         var subsequentOrder: number = subsequentNote.order;
         const notesWithSameOrder: any = getAllWithAttr(notes.items, 'order', subsequentOrder);
@@ -421,6 +416,7 @@ joplin.plugins.register({
           await DATA.put(['notes', selectedNote.id], null, { order: subsequentOrder - 10 });
         } else {
           // put selected note in between subsequent in sub-subsequent note
+          // TODO DA
           const subsubsequentNote: any = await DATA.get(['notes', notes.items[index - 2].id], { fields: ['id', 'order'] });
           const newOrder: number = ((subsequentNote.order - subsubsequentNote.order) / 2);
           await DATA.put(['notes', selectedNote.id], null, { order: subsequentNote.order - newOrder });
@@ -452,6 +448,7 @@ joplin.plugins.register({
         if (uncompletedTodosOnTop && selectedNote.todo_completed) return;
 
         // get all notes from folder sorted by their 'order' value and exit if empty
+        // TODO DA
         const notes: any = await DATA.get(['folders', selectedNote.parent_id, 'notes'], { fields: ['id', 'title', 'order'], order_by: 'order', order_dir: 'ASC' });
         if (!notes.items.length) return;
 
@@ -459,6 +456,7 @@ joplin.plugins.register({
         const index = getIndexWithAttr(notes.items, 'id', selectedNote.id);
         if (index == 0) return;
 
+        // TODO DA
         const lastNote: any = await DATA.get(['notes', notes.items[0].id], { fields: ['id', 'order'] });
         if (lastNote.order == 0) {
           const notesWithZeroOrder: any = getAllWithAttr(notes.items, 'order', 0);
