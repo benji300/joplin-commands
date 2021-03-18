@@ -26,8 +26,8 @@ export class DA {
    * Gets All folders from the database.
    * By default it includes the fields: id, title
    */
-  static async getAllFolders(additionalFields?: string[]): Promise<any[]> {
-    // TODO implement additionalFields
+  static async getAllFolders(extraFields?: string[]): Promise<any[]> {
+    // TODO implement extraFields
     const fields: string[] = ['id', 'title'];
     return await DA.getAll(['folders'], { fields: fields, page: 1 });
   }
@@ -36,25 +36,25 @@ export class DA {
    * Gets the folder with the handle ID from the database or null. Including the specified fields.
    * By default it includes the fields: id, title
    */
-  static async getFolderWithId(id: string, additionalFields?: string[]): Promise<any> {
+  static async getFolderWithId(id: string, extraFields?: string[]): Promise<any> {
     return await joplin.data.get(['folders', id], { fields: ['id', 'title'] });
-    // return (await DA.getAllFolders(additionalFields)).find(x => x.id === id);
+    // return (await DA.getAllFolders(extraFields)).find(x => x.id === id);
   }
 
   /**
    * Gets the folder with the handle title from the database or null. Including the specified fields.
    * By default it includes the fields: id, title
    */
-  static async getFolderWithTitle(title: string, additionalFields?: string[]): Promise<any> {
-    return (await DA.getAllFolders(additionalFields)).find(x => x.title === title);
+  static async getFolderWithTitle(title: string, extraFields?: string[]): Promise<any> {
+    return (await DA.getAllFolders(extraFields)).find(x => x.title === title);
   }
 
   /**
    * Gets All notes from the database.
    * By default it includes the fields: id, title, is_todo, todo_completed
    */
-  static async getAllNotes(additionalFields?: string[]): Promise<any[]> {
-    // TODO implement additionalFields
+  static async getAllNotes(extraFields?: string[]): Promise<any[]> {
+    // TODO implement extraFields
     const fields: string[] = ['id', 'title', 'is_todo', 'todo_completed'];
     return await DA.getAll(['notes'], { fields: fields, page: 1 });
     // console.log(`notes: ${JSON.stringify(notes)}`);
@@ -65,19 +65,17 @@ export class DA {
    * Gets the note with the handle ID from the database or null. Including the specified fields.
    * By default it includes the fields: id, title, is_todo, todo_completed
    */
-  static async getNoteWithId(id: string, additionalFields?: string[]): Promise<any> {
-    // TODO implement additionalFields
+  static async getNoteWithId(id: string, extraFields?: string[]): Promise<any> {
+    // TODO implement extraFields
     return await joplin.data.get(['notes', id], { fields: ['id', 'title', 'is_todo', 'todo_completed'] });
-    // const notes: any[] = await DA.getAllNotes(additionalFields);
-    // return notes.find(x => x.id === id);
   }
 
   /**
    * Gets the note with the handle title from the database or null. Including the specified fields.
    * By default it includes the fields: id, title, is_todo, todo_completed
    */
-  static async getNoteWithTitle(title: string, additionalFields?: string[]): Promise<any> {
-    return (await DA.getAllNotes(additionalFields)).find(x => x.title === title);
+  static async getNoteWithTitle(title: string, extraFields?: string[]): Promise<any> {
+    return (await DA.getAllNotes(extraFields)).find(x => x.title === title);
   }
 
 }

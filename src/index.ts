@@ -261,16 +261,17 @@ joplin.plugins.register({
       name: 'touchNote',
       label: 'Touch note',
       iconName: 'fas fa-hand-pointer',
-      enabledCondition: 'oneNoteSelected',
-      execute: async () => {
-        // get the selected note and exit if none is currently selected
-        const selectedNote = await WORKSPACE.selectedNote();
-        if (!selectedNote) return;
+      enabledCondition: 'someNotesSelected',
+      execute: async (noteIds: string[]) => {
+        // get selected note ids and return if empty
+        let selectedNoteIds: string[] = noteIds;
+        if (!selectedNoteIds) selectedNoteIds = await WORKSPACE.selectedNoteIds();
+        if (!selectedNoteIds) return;
 
-        // TODO allow to touch multiple notes at once
-
-        // set 'updated_time' to current timestamp value
-        await DATA.put(['notes', selectedNote.id], null, { updated_time: Date.now() });
+        // set 'updated_time' to current timestamp value for each note
+        for (const noteId of selectedNoteIds) {
+          await DATA.put(['notes', noteId], null, { updated_time: Date.now() });
+        }
       },
     });
 
@@ -487,7 +488,7 @@ joplin.plugins.register({
       name: 'quickMove1',
       label: `Move to: ${lblQuickMove1}`,
       iconName: 'fas fa-shipping-fast',
-      enabledCondition: 'oneNoteSelected',
+      enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
         quickMoveToFolder(settings.quickMove1, noteIds);
       }
@@ -500,7 +501,7 @@ joplin.plugins.register({
       name: 'quickMove2',
       label: `Move to: ${lblQuickMove2}`,
       iconName: 'fas fa-shipping-fast',
-      enabledCondition: 'oneNoteSelected',
+      enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
         quickMoveToFolder(settings.quickMove2, noteIds);
       }
@@ -513,7 +514,7 @@ joplin.plugins.register({
       name: 'quickMove3',
       label: `Move to: ${lblQuickMove3}`,
       iconName: 'fas fa-shipping-fast',
-      enabledCondition: 'oneNoteSelected',
+      enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
         quickMoveToFolder(settings.quickMove3, noteIds);
       }
@@ -526,7 +527,7 @@ joplin.plugins.register({
       name: 'quickMove4',
       label: `Move to: ${lblQuickMove4}`,
       iconName: 'fas fa-shipping-fast',
-      enabledCondition: 'oneNoteSelected',
+      enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
         quickMoveToFolder(settings.quickMove4, noteIds);
       }
@@ -539,7 +540,7 @@ joplin.plugins.register({
       name: 'quickMove5',
       label: `Move to: ${lblQuickMove5}`,
       iconName: 'fas fa-shipping-fast',
-      enabledCondition: 'oneNoteSelected',
+      enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
         quickMoveToFolder(settings.quickMove5, noteIds);
       }
@@ -552,7 +553,7 @@ joplin.plugins.register({
       name: 'quickMove6',
       label: `Move to: ${lblQuickMove6}`,
       iconName: 'fas fa-shipping-fast',
-      enabledCondition: 'oneNoteSelected',
+      enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
         quickMoveToFolder(settings.quickMove6, noteIds);
       }
@@ -565,7 +566,7 @@ joplin.plugins.register({
       name: 'quickMove7',
       label: `Move to: ${lblQuickMove7}`,
       iconName: 'fas fa-shipping-fast',
-      enabledCondition: 'oneNoteSelected',
+      enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
         quickMoveToFolder(settings.quickMove7, noteIds);
       }
@@ -578,7 +579,7 @@ joplin.plugins.register({
       name: 'quickMove8',
       label: `Move to: ${lblQuickMove8}`,
       iconName: 'fas fa-shipping-fast',
-      enabledCondition: 'oneNoteSelected',
+      enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
         quickMoveToFolder(settings.quickMove8, noteIds);
       }
