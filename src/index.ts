@@ -60,23 +60,19 @@ joplin.plugins.register({
       return folder;
     }
 
-    async function quickMoveToFolder(quickMoveFolder: string, noteIds: string[]) {
-      if (quickMoveFolder == '<empty>' || quickMoveFolder == '') return;
+    async function quickMoveToFolder(quickMoveFolderId: string, noteIds: string[]) {
+      if (quickMoveFolderId === '0' || quickMoveFolderId === '') return;
 
       // get selected note ids and return if empty
       let selectedNoteIds = noteIds;
       if (!selectedNoteIds) selectedNoteIds = await WORKSPACE.selectedNoteIds();
       if (!selectedNoteIds) return;
 
-      // check if quick move folder exist and exit if not
-      const folder = await DA.getFolderWithTitle(quickMoveFolder);
-      if (!folder) return;
-
       // move each selected note to new folder
       let lastNoteId = '';
       for (const noteId of selectedNoteIds) {
         lastNoteId = noteId;
-        await DATA.put(['notes', noteId], null, { parent_id: folder.id });
+        await DATA.put(['notes', noteId], null, { parent_id: quickMoveFolderId });
       }
 
       // keep last moved note selected if enabled

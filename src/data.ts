@@ -7,18 +7,17 @@ import { Path } from 'api/types';
 export class DA {
 
   private static async getAll(path: Path, query: any): Promise<any[]> {
-    console.log(`getAll:`);
     query.page = 1;
     let response = await joplin.data.get(path, query);
-    console.log(`response: ${JSON.stringify(response)}`);
+    // console.log(`response: ${JSON.stringify(response)}`);
     let result = !!response.items ? response.items : [];
     while (!!response.has_more) {
-      console.log(`has_more`);
+      // console.log(`has_more`);
       query.page += 1;
       response = await joplin.data.get(path, query);
       result.concat(response.items)
     }
-    console.log(`result: ${JSON.stringify(result)}`);
+    // console.log(`result: ${JSON.stringify(result)}`);
     return result;
   }
 
@@ -28,7 +27,7 @@ export class DA {
    */
   static async getAllFolders(extraFields?: string[]): Promise<any[]> {
     // TODO implement extraFields
-    const fields: string[] = ['id', 'title'];
+    const fields: string[] = ['id', 'title', 'parent_id'];
     return await DA.getAll(['folders'], { fields: fields, page: 1 });
   }
 
@@ -37,7 +36,7 @@ export class DA {
    * By default it includes the fields: id, title
    */
   static async getFolderWithId(id: string, extraFields?: string[]): Promise<any> {
-    return await joplin.data.get(['folders', id], { fields: ['id', 'title'] });
+    return await joplin.data.get(['folders', id], { fields: ['id', 'title', 'parent_id'] });
     // return (await DA.getAllFolders(extraFields)).find(x => x.id === id);
   }
 

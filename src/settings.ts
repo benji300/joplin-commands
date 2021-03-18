@@ -1,6 +1,7 @@
 import joplin from 'api';
 import { SettingItemType } from 'api/types';
 import { ChangeEvent } from 'api/JoplinSettings';
+import { DA } from './data';
 
 /**
  * Predefined keyboard shortcuts.
@@ -28,7 +29,7 @@ export enum DefaultKeys {
  * Used when setting is set to 'default'.
  */
 enum SettingDefaults {
-  Empty = '<empty>',
+  Empty = ' ',
   Default = 'default',
   FontFamily = 'Roboto',
   FontSize = 'var(--joplin-font-size)',
@@ -116,10 +117,32 @@ export class Settings {
 
   //#endregion
 
+  private async getFoldersToSelect(): Promise<any> {
+    const folders: any[] = await DA.getAllFolders();
+
+    let folderStr: string = '{';
+    folderStr += `"0": " ", `; // default empty
+    for (const folder of folders) {
+      let title: string = folder.title;
+      if (folder.parent_id) {
+        const parent: any = await DA.getFolderWithId(folder.parent_id);
+        if (parent && parent.title) {
+          title = `${parent.title}/${folder.title}`;
+        }
+      }
+      const separator: string = (folders.indexOf(folder) == folders.length - 1) ? '' : ',';
+      folderStr += `"${folder.id}": "${title}"${separator} `;
+    }
+    folderStr += '}';
+    return JSON.parse(folderStr);
+  }
+
   /**
    * Register settings section with all options and intially read them at the end.
    */
   async register() {
+    const folderSelection: any = await this.getFoldersToSelect();
+
     // settings section
     await joplin.settings.registerSection('commands.settings', {
       label: 'Command Collection',
@@ -142,76 +165,75 @@ export class Settings {
       value: this._quickMove1,
       type: SettingItemType.String,
       section: 'commands.settings',
+      isEnum: true,
       public: true,
-      label: 'Enter notebook name for quick move action 1.',
-      description: 'Specify the name of a notebook to which the selected note can be moved directly without interaction. Currently the notebook names must be copied manually from the sidebar. Changes are only applied after restart.'
+      label: 'Select notebook for quick move action 1.',
+      description: 'Select the notebook to which the selected note(s) can be moved quickly without interaction (e.g. with assigned keyboard shortcut). The notebook selection list is only updated on App restart.',
+      options: folderSelection
     });
     await joplin.settings.registerSetting('quickMove2', {
       value: this._quickMove2,
       type: SettingItemType.String,
       section: 'commands.settings',
+      isEnum: true,
       public: true,
-      label: 'Enter notebook name for quick move action 2.'
+      label: 'Select notebook for quick move action 2.',
+      options: folderSelection
     });
     await joplin.settings.registerSetting('quickMove3', {
       value: this._quickMove3,
       type: SettingItemType.String,
       section: 'commands.settings',
+      isEnum: true,
       public: true,
-      label: 'Enter notebook name for quick move action 3.'
+      label: 'Select notebook for quick move action 3.',
+      options: folderSelection
     });
     await joplin.settings.registerSetting('quickMove4', {
       value: this._quickMove4,
       type: SettingItemType.String,
       section: 'commands.settings',
+      isEnum: true,
       public: true,
-      label: 'Enter notebook name for quick move action 4.'
+      label: 'Select notebook for quick move action 4.',
+      options: folderSelection
     });
     await joplin.settings.registerSetting('quickMove5', {
       value: this._quickMove5,
       type: SettingItemType.String,
       section: 'commands.settings',
+      isEnum: true,
       public: true,
-      label: 'Enter notebook name for quick move action 5.'
+      label: 'Select notebook for quick move action 5.',
+      options: folderSelection
     });
     await joplin.settings.registerSetting('quickMove6', {
       value: this._quickMove6,
       type: SettingItemType.String,
       section: 'commands.settings',
+      isEnum: true,
       public: true,
-      label: 'Enter notebook name for quick move action 6.'
+      label: 'Select notebook for quick move action 6.',
+      options: folderSelection
     });
     await joplin.settings.registerSetting('quickMove7', {
       value: this._quickMove7,
       type: SettingItemType.String,
       section: 'commands.settings',
+      isEnum: true,
       public: true,
-      label: 'Enter notebook name for quick move action 7.'
+      label: 'Select notebook for quick move action 7.',
+      options: folderSelection
     });
     await joplin.settings.registerSetting('quickMove8', {
       value: this._quickMove8,
       type: SettingItemType.String,
       section: 'commands.settings',
+      isEnum: true,
       public: true,
-      label: 'Enter notebook name for quick move action 8.'
+      label: 'Select notebook for quick move action 8.',
+      options: folderSelection
     });
-
-    // await joplin.settings.registerSetting('unpinBehavior', {
-    //   value: UnpinBehavior.Keep,
-    //   type: SettingItemType.Int,
-    //   section: 'note.tabs.settings',
-    //   isEnum: true,
-    //   public: true,
-    //   label: 'Unpin active tab behavior',
-    //   description: 'Specify the behavior when unpinning the current active tab. ' +
-    //     'Either keep the active tab selected (may replaces the temporary one) or select another one, depending on the setting.',
-    //   options: {
-    //     '0': 'Keep selected',
-    //     '1': 'Select last active tab',
-    //     '2': 'Select left tab',
-    //     '3': 'Select right tab'
-    //   },
-    // });
 
     // advanced settings
     // none
