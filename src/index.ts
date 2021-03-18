@@ -52,6 +52,23 @@ joplin.plugins.register({
       return -1;
     }
 
+    async function getFolderWithId(folderId: string, field: any): Promise<any> {
+      let folder: any;
+
+      if (folderId) {
+        // called from context menu
+        folder = await DATA.get(['folders', folderId], { fields: [field] });
+      } else {
+        // get the parent folder name of the selected note
+        const selectedNote = await WORKSPACE.selectedNote();
+        if (selectedNote) {
+          const note: any = await DATA.get(['notes', selectedNote.id], { fields: ['parent_id'] });
+          folder = await DATA.get(['folders', note.parent_id], { fields: [field] });
+        }
+      }
+      return folder;
+    }
+
     async function quickMoveToFolder(quickMoveFolder: string) {
       if (quickMoveFolder == '<empty>' || quickMoveFolder == '') return;
 
@@ -78,31 +95,29 @@ joplin.plugins.register({
     //#region COMMANDS
 
     // Command: copyFolderName
-    // Desc: Copy the name of right-clicked folder
+    // Desc: Copy the name of the folder
     await COMMANDS.register({
       name: 'copyFolderName',
       label: 'Copy notebook name',
       iconName: 'fas fa-copy',
       execute: async (folderId: string) => {
-        let folder: any;
-
-        if (folderId) {
-
-          // called from context menu
-          folder = await DATA.get(['folders', folderId], { fields: ['title'] });
-        } else {
-
-          // get the parent folder name of the selected note
-          const selectedNote = await WORKSPACE.selectedNote();
-          if (selectedNote) {
-            const note: any = await DATA.get(['notes', selectedNote.id], { fields: ['parent_id'] });
-            folder = await DATA.get(['folders', note.parent_id], { fields: ['title'] });
-          }
-        }
-
-        // copy name to clipboard
+        let folder: any = await getFolderWithId(folderId, 'title');
         if (folder) {
           copy(folder.title);
+        }
+      }
+    });
+
+    // Command: copyFolderId
+    // Desc: Copy the ID of the folder
+    await COMMANDS.register({
+      name: 'copyFolderId',
+      label: 'Copy notebook ID',
+      iconName: 'fas fa-copy',
+      execute: async (folderId: string) => {
+        let folder: any = await getFolderWithId(folderId, 'id');
+        if (folder) {
+          copy(folder.id);
         }
       }
     });
@@ -668,6 +683,7 @@ joplin.plugins.register({
 
     // add commands to folder context menu
     await joplin.views.menuItems.create('folderContextCopyFolderName', 'copyFolderName', MenuItemLocation.FolderContextMenu);
+    await joplin.views.menuItems.create('folderContextCopyFolderId', 'copyFolderId', MenuItemLocation.FolderContextMenu);
 
     // add commands to notes context menu
     await joplin.views.menuItems.create('notesContextCopyNoteName', 'copyNoteName', MenuItemLocation.NoteListContextMenu);

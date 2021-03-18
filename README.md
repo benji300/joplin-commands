@@ -10,8 +10,11 @@ Furthermore it maps also some [internal commands](#mapped-commands) to the main 
 ## Table of contents
 
 - [Features](#features)
+- [Installation](#installation)
+- [Commands](#commands)
   - [New commands](#new-commands)
     - [Copy notebook name](#copy-notebook-name)
+    - [Copy notebook ID](#copy-notebook-id)
     - [Copy note name](#copy-note-name)
     - [Copy note ID](#copy-note-id)
     - [Copy Markdown link](#copy-markdown-link)
@@ -22,7 +25,7 @@ Furthermore it maps also some [internal commands](#mapped-commands) to the main 
     - [Move note in list](#Move-note-in-list)
     - [Quick move note](#quick-move-note)
   - [Mapped commands](#mapped-commands)
-- [Installation](#installation)
+  - [Keyboard shortcuts](#keyboard-shortcuts)
 - [User options](#user-options)
 - [Feedback](#feedback)
 - [Support](#support)
@@ -39,8 +42,30 @@ Furthermore it maps also some [internal commands](#mapped-commands) to the main 
   - and more...
 - Map Joplin [internal commands](#mapped-commands) to the main menu
   - Allows to assign keyboard shortcuts to them
-- Add [user options](#user-options) to specify additional display locations for commands
-  - For example to display also in note toolbar
+
+## Installation
+
+### Automatic (Joplin v1.6.4 and newer)
+
+- Currently not supported
+
+### Manual
+
+- Download the latest released JPL package (`*.jpl`) from [here](https://github.com/benji300/joplin-commands/releases)
+- Open Joplin and navigate to `Tools > Options > Plugins`
+- Press `Install plugin` and select the previously downloaded `jpl` file
+- Confirm selection
+- Restart Joplin to enable the plugin
+
+### Uninstall
+
+- Open Joplin and navigate to `Tools > Options > Plugins`
+- Search for the `Command Collection` plugin
+- Press `Delete` to remove the plugin completely
+  - Alternatively you can also disable the plugin by clicking on the toggle button
+- Restart Joplin
+
+## Commands
 
 ### New commands
 
@@ -56,7 +81,15 @@ This plugin provides the commands as described in the following chapters.
 | ------------------ | ---------------- | ----------- | ----------------- |
 | Copy notebook name | `copyFolderName` | -           | `NotebookContext` |
 
-Copy the name of the selected notebook(s) to the clipboard.
+Copy the name of the selected notebook to the clipboard. If triggered via command palette, the parent notebook name of the selected note is copied.
+
+#### Copy notebook ID
+
+| Command Label    | Command ID     | Default Key | Menu contexts     |
+| ---------------- | -------------- | ----------- | ----------------- |
+| Copy notebook ID | `copyFolderId` | -           | `NotebookContext` |
+
+Copy the ID of the selected notebook to the clipboard. If triggered via command palette, the parent notebook ID of the selected note is copied.
 
 #### Copy note name
 
@@ -157,27 +190,10 @@ The following internal commands are mapped to main menu entries. This allows to 
 | Set alarm        | `editAlarm`    | -                   | `Note>Properties`       |
 | Move to notebook | `moveToFolder` | `CmdOrCtrl+Shift+M` | `Note>Move to notebook` |
 
-## Installation
+### Keyboard shortcuts
 
-### Automatic (Joplin v1.6.4 and newer)
-
-- Currently not supported
-
-### Manual
-
-- Download the latest released JPL package (`*.jpl`) from [here](https://github.com/benji300/joplin-commands/releases)
-- Open Joplin and navigate to `Tools > Options > Plugins`
-- Press `Install plugin` and select the previously downloaded `jpl` file
-- Confirm selection
-- Restart Joplin to enable the plugin
-
-### Uninstall
-
-- Open Joplin and navigate to `Tools > Options > Plugins`
-- Search for the `Command Collection` plugin
-- Press `Delete` to remove the plugin completely
-  - Alternatively you can also disable the plugin by clicking on the toggle button
-- Restart Joplin
+Keyboard shortcuts can be assigned in user options via `Tools > Options > Keyboard Shortcuts` to all [commands](#commands) which are assigned to any main menu entry (e.g. `Tools`).
+In the keyboard shortcut editor, search for the command label where shortcuts shall be added.
 
 ## User options
 
