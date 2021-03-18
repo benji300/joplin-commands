@@ -2,6 +2,7 @@ import joplin from 'api';
 import { MenuItem, MenuItemLocation } from 'api/types';
 import { Settings, DefaultKeys } from './settings';
 import { TextInputDialog } from './dialogs';
+import { DA } from './data';
 import { Url } from './url';
 
 const copy = require('../node_modules/copy-to-clipboard');
@@ -24,14 +25,14 @@ joplin.plugins.register({
       return text.replace(/(\[|\])/g, '\\$1');
     }
 
-    function getItemWithAttr(array: any, attr: any, value: any): any {
-      for (var i = 0; i < array.length; i += 1) {
-        if (array[i][attr] === value) {
-          return array[i];
-        }
-      }
-      return -1;
-    }
+    // function getItemWithAttr(array: any, attr: any, value: any): any {
+    //   for (var i = 0; i < array.length; i += 1) {
+    //     if (array[i][attr] === value) {
+    //       return array[i];
+    //     }
+    //   }
+    //   return -1;
+    // }
 
     function getAllWithAttr(array: any, attr: any, value: any): any {
       const notes: any = [];
@@ -52,41 +53,44 @@ joplin.plugins.register({
       return -1;
     }
 
-    async function getFolderWithId(folderId: string, field: any): Promise<any> {
+    async function getFolderWithId(folderId: string): Promise<any> {
       let folder: any;
 
       if (folderId) {
         // called from context menu
-        folder = await DATA.get(['folders', folderId], { fields: [field] });
+        folder = await DA.getFolderWithId(folderId, ['id', 'title']);
       } else {
         // get the parent folder name of the selected note
-        const selectedNote = await WORKSPACE.selectedNote();
+        const selectedNote: any = await WORKSPACE.selectedNote();
         if (selectedNote) {
-          const note: any = await DATA.get(['notes', selectedNote.id], { fields: ['parent_id'] });
-          folder = await DATA.get(['folders', note.parent_id], { fields: [field] });
+          folder = await DA.getFolderWithId(selectedNote.parent_id, ['id', 'title']);
         }
       }
       return folder;
     }
 
-    async function quickMoveToFolder(quickMoveFolder: string) {
+    async function quickMoveToFolder(quickMoveFolder: string, noteIds: string[]) {
       if (quickMoveFolder == '<empty>' || quickMoveFolder == '') return;
 
-      // get the selected note and exit if none is currently selected
-      const selectedNote: any = await WORKSPACE.selectedNote();
-      if (!selectedNote) return;
+      // get selected note ids and return if empty
+      let selectedNoteIds = noteIds;
+      if (!selectedNoteIds) selectedNoteIds = await WORKSPACE.selectedNoteIds();
+      if (!selectedNoteIds) return;
 
       // check if quick move folder exist and exit if not
-      const folders: any = await DATA.get(['folders'], { fields: ['id', 'title'] });
-      const folder: any = getItemWithAttr(folders.items, 'title', quickMoveFolder);
-      if (folder == -1) return;
+      const folder = await DA.getFolderWithTitle(quickMoveFolder, ['id', 'title']);
+      if (!folder) return;
 
-      // move selected note to new folder
-      await DATA.put(['notes', selectedNote.id], null, { parent_id: folder.id });
+      // move each selected note to new folder
+      let lastNoteId = '';
+      for (const noteId of selectedNoteIds) {
+        lastNoteId = noteId;
+        await DATA.put(['notes', noteId], null, { parent_id: folder.id });
+      }
 
-      // keep moved note selected if enabled
-      if (settings.keepMovedNoteSelected) {
-        COMMANDS.execute('openNote', selectedNote.id);
+      // keep last moved note selected if enabled
+      if (settings.keepMovedNoteSelected && lastNoteId) {
+        COMMANDS.execute('openNote', lastNoteId);
       }
     }
 
@@ -101,7 +105,7 @@ joplin.plugins.register({
       label: 'Copy notebook name',
       iconName: 'fas fa-copy',
       execute: async (folderId: string) => {
-        let folder: any = await getFolderWithId(folderId, 'title');
+        let folder: any = await getFolderWithId(folderId);
         if (folder) {
           copy(folder.title);
         }
@@ -115,7 +119,7 @@ joplin.plugins.register({
       label: 'Copy notebook ID',
       iconName: 'fas fa-copy',
       execute: async (folderId: string) => {
-        let folder: any = await getFolderWithId(folderId, 'id');
+        let folder: any = await getFolderWithId(folderId);
         if (folder) {
           copy(folder.id);
         }
@@ -486,8 +490,8 @@ joplin.plugins.register({
       label: `Move to: ${lblQuickMove1}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
-      execute: async () => {
-        quickMoveToFolder(settings.quickMove1);
+      execute: async (noteIds: string[]) => {
+        quickMoveToFolder(settings.quickMove1, noteIds);
       }
     });
 
@@ -499,8 +503,8 @@ joplin.plugins.register({
       label: `Move to: ${lblQuickMove2}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
-      execute: async () => {
-        quickMoveToFolder(settings.quickMove2);
+      execute: async (noteIds: string[]) => {
+        quickMoveToFolder(settings.quickMove2, noteIds);
       }
     });
 
@@ -512,8 +516,8 @@ joplin.plugins.register({
       label: `Move to: ${lblQuickMove3}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
-      execute: async () => {
-        quickMoveToFolder(settings.quickMove3);
+      execute: async (noteIds: string[]) => {
+        quickMoveToFolder(settings.quickMove3, noteIds);
       }
     });
 
@@ -525,8 +529,8 @@ joplin.plugins.register({
       label: `Move to: ${lblQuickMove4}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
-      execute: async () => {
-        quickMoveToFolder(settings.quickMove4);
+      execute: async (noteIds: string[]) => {
+        quickMoveToFolder(settings.quickMove4, noteIds);
       }
     });
 
@@ -538,8 +542,8 @@ joplin.plugins.register({
       label: `Move to: ${lblQuickMove5}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
-      execute: async () => {
-        quickMoveToFolder(settings.quickMove5);
+      execute: async (noteIds: string[]) => {
+        quickMoveToFolder(settings.quickMove5, noteIds);
       }
     });
 
@@ -551,8 +555,8 @@ joplin.plugins.register({
       label: `Move to: ${lblQuickMove6}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
-      execute: async () => {
-        quickMoveToFolder(settings.quickMove6);
+      execute: async (noteIds: string[]) => {
+        quickMoveToFolder(settings.quickMove6, noteIds);
       }
     });
 
@@ -564,8 +568,8 @@ joplin.plugins.register({
       label: `Move to: ${lblQuickMove7}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
-      execute: async () => {
-        quickMoveToFolder(settings.quickMove7);
+      execute: async (noteIds: string[]) => {
+        quickMoveToFolder(settings.quickMove7, noteIds);
       }
     });
 
@@ -577,8 +581,8 @@ joplin.plugins.register({
       label: `Move to: ${lblQuickMove8}`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'oneNoteSelected',
-      execute: async () => {
-        quickMoveToFolder(settings.quickMove8);
+      execute: async (noteIds: string[]) => {
+        quickMoveToFolder(settings.quickMove8, noteIds);
       }
     });
 
