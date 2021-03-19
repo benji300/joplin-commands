@@ -29,7 +29,7 @@ export enum DefaultKeys {
  * Used when setting is set to 'default'.
  */
 enum SettingDefaults {
-  Empty = ' ',
+  Empty = '0',
   Default = 'default',
   FontFamily = 'Roboto',
   FontSize = 'var(--joplin-font-size)',
@@ -127,7 +127,7 @@ export class Settings {
       if (folder.parent_id) {
         const parent: any = await DA.getFolderWithId(folder.parent_id);
         if (parent && parent.title) {
-          title = `${parent.title}/${folder.title}`;
+          title = `${parent.title} / ${folder.title}`;
         }
       }
       const separator: string = (folders.indexOf(folder) == folders.length - 1) ? '' : ',';
@@ -168,7 +168,7 @@ export class Settings {
       isEnum: true,
       public: true,
       label: 'Select notebook for quick move action 1.',
-      description: 'Select the notebook to which the selected note(s) can be moved quickly without interaction (e.g. with assigned keyboard shortcut). The notebook selection list is only updated on App restart.',
+      description: 'The notebook to which the selected note(s) can be moved quickly without interaction (e.g. with assigned keyboard shortcut). The notebook selection list is only updated on App restart.',
       options: folderSelection
     });
     await joplin.settings.registerSetting('quickMove2', {

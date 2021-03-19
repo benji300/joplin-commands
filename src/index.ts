@@ -1,5 +1,6 @@
 import joplin from 'api';
 import { MenuItem, MenuItemLocation } from 'api/types';
+import { ChangeEvent } from 'api/JoplinSettings';
 import { Settings, DefaultKeys } from './settings';
 import { TextInputDialog } from './dialogs';
 import { DA } from './data';
@@ -11,6 +12,7 @@ joplin.plugins.register({
   onStart: async function () {
     const COMMANDS = joplin.commands;
     const DATA = joplin.data;
+    const SETTINGS = joplin.settings;
     const WORKSPACE = joplin.workspace;
     // settings
     const settings: Settings = new Settings();
@@ -60,13 +62,21 @@ joplin.plugins.register({
       return folder;
     }
 
-    async function quickMoveToFolder(quickMoveFolderId: string, noteIds: string[]) {
-      if (quickMoveFolderId === '0' || quickMoveFolderId === '') return;
+    async function quickMoveToFolder(actionId: number, quickMoveFolderId: string, noteIds: string[]) {
+      if (quickMoveFolderId === undefined || quickMoveFolderId === '0') return;
 
       // get selected note ids and return if empty
       let selectedNoteIds = noteIds;
       if (!selectedNoteIds) selectedNoteIds = await WORKSPACE.selectedNoteIds();
       if (!selectedNoteIds) return;
+
+      // check if folder still exists
+      try {
+        await DA.getFolderWithId(quickMoveFolderId);
+      } catch (err) {
+        await joplin.views.dialogs.showMessageBox(`Selected notebook of quick move action ${actionId} does not exist. Please select another notebook in the settings.`);
+        return;
+      }
 
       // move each selected note to new folder
       let lastNoteId = '';
@@ -479,105 +489,97 @@ joplin.plugins.register({
 
     // Command: quickMove1
     // Desc: Move the selected note(s) directly to the specified folder
-    const lblQuickMove1: string = settings.quickMove1;
     await COMMANDS.register({
       name: 'quickMove1',
-      label: `Move to: ${lblQuickMove1}`,
+      label: `Quick move action 1`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
-        quickMoveToFolder(settings.quickMove1, noteIds);
+        quickMoveToFolder(1, settings.quickMove1, noteIds);
       }
     });
 
     // Command: quickMove2
     // Desc: Move the selected note(s) directly to the specified folder
-    const lblQuickMove2: string = settings.quickMove2;
     await COMMANDS.register({
       name: 'quickMove2',
-      label: `Move to: ${lblQuickMove2}`,
+      label: `Quick move action 2`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
-        quickMoveToFolder(settings.quickMove2, noteIds);
+        quickMoveToFolder(2, settings.quickMove2, noteIds);
       }
     });
 
     // Command: quickMove3
     // Desc: Move the selected note(s) directly to the specified folder
-    const lblQuickMove3: string = settings.quickMove3;
     await COMMANDS.register({
       name: 'quickMove3',
-      label: `Move to: ${lblQuickMove3}`,
+      label: `Quick move action 3`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
-        quickMoveToFolder(settings.quickMove3, noteIds);
+        quickMoveToFolder(3, settings.quickMove3, noteIds);
       }
     });
 
     // Command: quickMove4
     // Desc: Move the selected note(s) directly to the specified folder
-    const lblQuickMove4: string = settings.quickMove4;
     await COMMANDS.register({
       name: 'quickMove4',
-      label: `Move to: ${lblQuickMove4}`,
+      label: `Quick move action 4`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
-        quickMoveToFolder(settings.quickMove4, noteIds);
+        quickMoveToFolder(4, settings.quickMove4, noteIds);
       }
     });
 
     // Command: quickMove5
     // Desc: Move the selected note(s) directly to the specified folder
-    const lblQuickMove5: string = settings.quickMove5;
     await COMMANDS.register({
       name: 'quickMove5',
-      label: `Move to: ${lblQuickMove5}`,
+      label: `Quick move action 5`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
-        quickMoveToFolder(settings.quickMove5, noteIds);
+        quickMoveToFolder(5, settings.quickMove5, noteIds);
       }
     });
 
     // Command: quickMove6
     // Desc: Move the selected note(s) directly to the specified folder
-    const lblQuickMove6: string = settings.quickMove6;
     await COMMANDS.register({
       name: 'quickMove6',
-      label: `Move to: ${lblQuickMove6}`,
+      label: `Quick move action 6`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
-        quickMoveToFolder(settings.quickMove6, noteIds);
+        quickMoveToFolder(6, settings.quickMove6, noteIds);
       }
     });
 
     // Command: quickMove7
     // Desc: Move the selected note(s) directly to the specified folder
-    const lblQuickMove7: string = settings.quickMove7;
     await COMMANDS.register({
       name: 'quickMove7',
-      label: `Move to: ${lblQuickMove7}`,
+      label: `Quick move action 7`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
-        quickMoveToFolder(settings.quickMove7, noteIds);
+        quickMoveToFolder(7, settings.quickMove7, noteIds);
       }
     });
 
     // Command: quickMove8
     // Desc: Move the selected note(s) directly to the specified folder
-    const lblQuickMove8: string = settings.quickMove8;
     await COMMANDS.register({
       name: 'quickMove8',
-      label: `Move to: ${lblQuickMove8}`,
+      label: `Quick move action 8`,
       iconName: 'fas fa-shipping-fast',
       enabledCondition: 'someNotesSelected',
       execute: async (noteIds: string[]) => {
-        quickMoveToFolder(settings.quickMove8, noteIds);
+        quickMoveToFolder(8, settings.quickMove8, noteIds);
       }
     });
 
@@ -696,7 +698,14 @@ joplin.plugins.register({
 
     //#region EVENTS
 
+    let onChangeCnt = 0;
+    SETTINGS.onChange(async (event: ChangeEvent) => {
+      console.debug(`onChange() hits: ${onChangeCnt++}`);
+      await settings.read(event);
+    });
+
     //#endregion
+
 
   }
 });
