@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- None
+
+## [1.0.0] - 2021-03-24
+
 ### Added
 
 - Commands to note list context menu ([#5](https://github.com/benji300/joplin-commands/issues/5))
