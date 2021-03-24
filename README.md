@@ -23,7 +23,6 @@ Furthermore it maps also some [internal commands](#mapped-commands) to the main 
     - [Open URL in browser](#Open-url-in-browser)
     - [Touch note](#touch-note)
     - [Move note in list](#Move-note-in-list)
-    - [Quick move note](#quick-move-note)
   - [Mapped commands](#mapped-commands)
   - [Keyboard shortcuts](#keyboard-shortcuts)
 - [User options](#user-options)
@@ -38,7 +37,6 @@ Furthermore it maps also some [internal commands](#mapped-commands) to the main 
 - Add [new commands](#new-commands) to ...
   - Update note properties (e.g. [Toggle to-do state](#toggle-to-do-state))
   - [Move note](#move-note-in-list) in current note list
-  - Quickly [move note to notebook](#quick-move-note) without interaction
   - and more...
 - Map Joplin [internal commands](#mapped-commands) to the main menu
   - Allows to assign keyboard shortcuts to them
@@ -142,9 +140,9 @@ Opens the note source URL in the system's default browser.
 
 #### Touch note
 
-| Command Label | Command ID  | Default Key | Menu contexts       |
-| ------------- | ----------- | ----------- | ------------------- |
-| Touch note    | `touchNote` | -           | `Note>Move in list` |
+| Command Label | Command ID  | Default Key | Menu contexts |
+| ------------- | ----------- | ----------- | ------------- |
+| Touch note    | `touchNote` | -           | `Note>Move`   |
 
 "Touch" the last updated timestamp of the selected note and set it to now.
 Useful to move a note to the top of a list when the 'Updated date' sort is active.
@@ -153,12 +151,12 @@ Useful to move a note to the top of a list when the 'Updated date' sort is activ
 
 #### Move note in list
 
-| Command Label  | Command ID     | Default Key          | Menu contexts       |
-| -------------- | -------------- | -------------------- | ------------------- |
-| Move to top    | `moveToTop`    | `CmdOrCtrl+num8`     | `Note>Move in list` |
-| Move up        | `moveUp`       | `CmdOrCtrl+Alt+num8` | `Note>Move in list` |
-| Move down      | `moveDown`     | `CmdOrCtrl+num2`     | `Note>Move in list` |
-| Move to bottom | `moveToBottom` | `CmdOrCtrl+Alt+num2` | `Note>Move in list` |
+| Command Label  | Command ID     | Default Key          | Menu contexts |
+| -------------- | -------------- | -------------------- | ------------- |
+| Move to top    | `moveToTop`    | `CmdOrCtrl+num8`     | `Note>Move`   |
+| Move up        | `moveUp`       | `CmdOrCtrl+Alt+num8` | `Note>Move`   |
+| Move down      | `moveDown`     | `CmdOrCtrl+num2`     | `Note>Move`   |
+| Move to bottom | `moveToBottom` | `CmdOrCtrl+Alt+num2` | `Note>Move`   |
 
 Change the position of a note in the current note list (notebook), if `Sort notes by` is set to `Custom order`.
 
@@ -166,29 +164,15 @@ Change the position of a note in the current note list (notebook), if `Sort note
 
 > **NOTE** - The default keys using num keys in order to trigger the commands also when focus is set to note list
 
-#### Quick move note
-
-| Command Label   | Command ID   | Default Key         | Menu contexts           |
-| --------------- | ------------ | ------------------- | ----------------------- |
-| Move to: `name` | `quickMove1` | `CmdOrCtrl+Shift+1` | `Note>Move to notebook` |
-| Move to: `name` | `quickMove2` | `CmdOrCtrl+Shift+2` | `Note>Move to notebook` |
-| Move to: `name` | `quickMove3` | `CmdOrCtrl+Shift+3` | `Note>Move to notebook` |
-| Move to: `name` | `quickMove4` | `CmdOrCtrl+Shift+4` | `Note>Move to notebook` |
-| Move to: `name` | `quickMove5` | `CmdOrCtrl+Shift+5` | `Note>Move to notebook` |
-
-Quickly move (without interaction) selected note to one of five predefined notebooks.
-
-> **NOTE** - `name` is the user defined name of the notebook. See [user options](#user-options) for details
-
 ### Mapped commands
 
 The following internal commands are mapped to main menu entries. This allows to assign keyboard shortcuts to them.
 
-| Command Label    | Command ID     | Default Key         | Menu contexts           |
-| ---------------- | -------------- | ------------------- | ----------------------- |
-| Checkbox         | `textCheckbox` | `CmdOrCtrl+Shift+C` | `Edit`                  |
-| Set alarm        | `editAlarm`    | -                   | `Note>Properties`       |
-| Move to notebook | `moveToFolder` | `CmdOrCtrl+Shift+M` | `Note>Move to notebook` |
+| Command Label    | Command ID     | Default Key         | Menu contexts     |
+| ---------------- | -------------- | ------------------- | ----------------- |
+| Checkbox         | `textCheckbox` | `CmdOrCtrl+Shift+C` | `Edit`            |
+| Set alarm        | `editAlarm`    | -                   | `Note>Properties` |
+| Move to notebook | `moveToFolder` | `CmdOrCtrl+Shift+M` | `Note>Move`       |
 
 ### Keyboard shortcuts
 
@@ -197,9 +181,7 @@ In the keyboard shortcut editor, search for the command label where shortcuts sh
 
 ## User options
 
-This plugin adds provides user options which can be changed via `Tools > Options > Command Collection`.
-
-> **NOTE** - Changes to the quick move actions are only applied after a restart of the app.
+This plugin does not provide any user options.
 
 ## Feedback
 

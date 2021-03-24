@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - User Option `showToggleTodoStateToolbar`
+- All quick move commands (moved to new [joplin-quick-move](https://github.com/benji300/joplin-quick-move) plugin)
 
 ## [0.2.0] - 2020-12-04
 
